@@ -1,0 +1,29 @@
+
+.DS_Store
+
+# IntelliJ
+.idea/
+*.iml
+
+# Java / Maven
+**/target/
+**/build/
+*.class
+*.log
+
+# Node / React
+**/node_modules/
+**/dist/
+**/.vite/
+
+# Secrets
+.env
+.env.*
+!.env.example
+**/*.pem
+**/*.key
+**/*credentials*
+**/*secrets*
+
+# Editors
+.vscode/
