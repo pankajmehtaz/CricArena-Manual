@@ -1,7 +1,11 @@
 package com.cricarena.backend.controller;
 
 import com.cricarena.backend.dto.request.TournamentRequest;
+import com.cricarena.backend.dto.response.MatchResponse;
+import com.cricarena.backend.dto.response.TournamentRegistrationResponse;
 import com.cricarena.backend.dto.response.TournamentResponse;
+import com.cricarena.backend.service.MatchService;
+import com.cricarena.backend.service.TournamentRegistrationService;
 import com.cricarena.backend.service.TournamentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -22,9 +26,15 @@ import java.util.List;
 public class TournamentController {
 
     private final TournamentService tournamentService;
+    private final TournamentRegistrationService tournamentRegistrationService;
+    private final MatchService matchService;
 
-    public TournamentController(TournamentService tournamentService) {
+    public TournamentController(TournamentService tournamentService,
+                                TournamentRegistrationService tournamentRegistrationService,
+                                MatchService matchService) {
         this.tournamentService = tournamentService;
+        this.tournamentRegistrationService = tournamentRegistrationService;
+        this.matchService = matchService;
     }
 
     @PostMapping
@@ -57,5 +67,35 @@ public class TournamentController {
     public ResponseEntity<Void> deleteTournament(@PathVariable Long id) {
         tournamentService.deleteTournament(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{tournamentId}/teams/{teamId}")
+    public ResponseEntity<TournamentRegistrationResponse> registerTeam(
+            @PathVariable Long tournamentId,
+            @PathVariable Long teamId) {
+        TournamentRegistrationResponse response = tournamentRegistrationService.registerTeam(tournamentId, teamId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/{tournamentId}/teams")
+    public ResponseEntity<List<TournamentRegistrationResponse>> getRegisteredTeams(
+            @PathVariable Long tournamentId) {
+        List<TournamentRegistrationResponse> registrations = tournamentRegistrationService.getRegisteredTeams(tournamentId);
+        return ResponseEntity.ok(registrations);
+    }
+
+    @DeleteMapping("/{tournamentId}/teams/{teamId}")
+    public ResponseEntity<Void> removeRegistration(
+            @PathVariable Long tournamentId,
+            @PathVariable Long teamId) {
+        tournamentRegistrationService.removeRegistration(tournamentId, teamId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{tournamentId}/matches")
+    public ResponseEntity<List<MatchResponse>> getMatchesByTournament(
+            @PathVariable Long tournamentId) {
+        List<MatchResponse> matches = matchService.getMatchesByTournament(tournamentId);
+        return ResponseEntity.ok(matches);
     }
 }
