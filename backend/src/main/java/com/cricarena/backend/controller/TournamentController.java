@@ -10,6 +10,8 @@ import com.cricarena.backend.service.TournamentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +40,7 @@ public class TournamentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'COLLEGE_ADMIN')")
     public ResponseEntity<TournamentResponse> createTournament(@Valid @RequestBody TournamentRequest request) {
         TournamentResponse response = tournamentService.createTournament(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -56,23 +59,33 @@ public class TournamentController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("@tenantSecurityService.canManageTournament(#id)")
     public ResponseEntity<TournamentResponse> updateTournament(
-            @PathVariable Long id,
+            @PathVariable @P("id") Long id,
             @Valid @RequestBody TournamentRequest request) {
         TournamentResponse response = tournamentService.updateTournament(id, request);
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/{id}/publish")
+    @PreAuthorize("@tenantSecurityService.canManageTournament(#id)")
+    public ResponseEntity<TournamentResponse> publishTournament(@PathVariable @P("id") Long id) {
+        TournamentResponse response = tournamentService.publishTournament(id);
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTournament(@PathVariable Long id) {
+    @PreAuthorize("@tenantSecurityService.canManageTournament(#id)")
+    public ResponseEntity<Void> deleteTournament(@PathVariable @P("id") Long id) {
         tournamentService.deleteTournament(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{tournamentId}/teams/{teamId}")
+    @PreAuthorize("@tenantSecurityService.canRegisterTeamForTournament(#tournamentId, #teamId)")
     public ResponseEntity<TournamentRegistrationResponse> registerTeam(
-            @PathVariable Long tournamentId,
-            @PathVariable Long teamId) {
+            @PathVariable @P("tournamentId") Long tournamentId,
+            @PathVariable @P("teamId") Long teamId) {
         TournamentRegistrationResponse response = tournamentRegistrationService.registerTeam(tournamentId, teamId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -85,9 +98,10 @@ public class TournamentController {
     }
 
     @DeleteMapping("/{tournamentId}/teams/{teamId}")
+    @PreAuthorize("@tenantSecurityService.canRemoveTeamFromTournament(#tournamentId, #teamId)")
     public ResponseEntity<Void> removeRegistration(
-            @PathVariable Long tournamentId,
-            @PathVariable Long teamId) {
+            @PathVariable @P("tournamentId") Long tournamentId,
+            @PathVariable @P("teamId") Long teamId) {
         tournamentRegistrationService.removeRegistration(tournamentId, teamId);
         return ResponseEntity.noContent().build();
     }

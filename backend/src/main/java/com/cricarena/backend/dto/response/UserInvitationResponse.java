@@ -16,6 +16,8 @@ public class UserInvitationResponse {
     private LocalDateTime expiresAt;
     private LocalDateTime acceptedAt;
     private LocalDateTime createdAt;
+    private String collegeName;
+    private String invitationUrl;
 
     public UserInvitationResponse() {
     }
@@ -104,5 +106,21 @@ public class UserInvitationResponse {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getCollegeName() {
+        return collegeName;
+    }
+
+    public void setCollegeName(String collegeName) {
+        this.collegeName = collegeName;
+    }
+
+    public String getInvitationUrl() {
+        return invitationUrl;
+    }
+
+    public void setInvitationUrl(String invitationUrl) {
+        this.invitationUrl = invitationUrl;
     }
 }

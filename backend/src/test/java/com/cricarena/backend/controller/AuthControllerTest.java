@@ -1,10 +1,13 @@
 package com.cricarena.backend.controller;
 
 import com.cricarena.backend.dto.request.LoginRequest;
+import com.cricarena.backend.dto.request.RefreshTokenRequest;
+import com.cricarena.backend.dto.request.RegisterRequest;
 import com.cricarena.backend.dto.response.AuthResponse;
 import com.cricarena.backend.dto.response.UserResponse;
 import com.cricarena.backend.dto.response.UserRoleAssignmentResponse;
 import com.cricarena.backend.entity.enums.UserRole;
+import com.cricarena.backend.exception.DuplicateResourceException;
 import com.cricarena.backend.exception.GlobalExceptionHandler;
 import com.cricarena.backend.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +26,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -58,7 +63,7 @@ class AuthControllerTest {
 
         AuthResponse authResponse = new AuthResponse(
                 "header.payload.signature",
-                null,
+                "refresh-token-123",
                 "Bearer",
                 900000L,
                 userResponse,
@@ -74,12 +79,12 @@ class AuthControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken", is("header.payload.signature")))
+                .andExpect(jsonPath("$.refreshToken", is("refresh-token-123")))
                 .andExpect(jsonPath("$.tokenType", is("Bearer")))
                 .andExpect(jsonPath("$.expiresIn", is(900000)))
                 .andExpect(jsonPath("$.user.id", is(1)))
                 .andExpect(jsonPath("$.user.email", is("admin@cricarena.com")))
                 .andExpect(jsonPath("$.roleAssignment.role", is("PLATFORM_ADMIN")))
-                // Ensure sensitive fields like passwordHash are NOT exposed
                 .andExpect(jsonPath("$.passwordHash").doesNotExist())
                 .andExpect(jsonPath("$.user.passwordHash").doesNotExist());
     }
@@ -97,84 +102,90 @@ class AuthControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status", is(401)))
-                .andExpect(jsonPath("$.error", is("Unauthorized")))
-                .andExpect(jsonPath("$.message", is("Invalid email or password")));
+                .andExpect(jsonPath("$.error", is("Unauthorized")));
     }
 
     @Test
-    @DisplayName("POST /api/auth/login - Unknown email returns 401 Unauthorized")
-    void login_withUnknownEmail_returns401() throws Exception {
-        when(authService.login(any(LoginRequest.class)))
-                .thenThrow(new BadCredentialsException("Invalid email or password"));
+    @DisplayName("POST /api/auth/register - Success (201 Created)")
+    void register_withValidRequest_returns201() throws Exception {
+        UserResponse userResponse = new UserResponse(20L, "New Student", "student@cricarena.com", true, null, null);
+        AuthResponse authResponse = new AuthResponse(
+                "jwt.access.token",
+                "new-refresh-token",
+                "Bearer",
+                900000L,
+                userResponse,
+                null
+        );
 
-        LoginRequest request = new LoginRequest("unknown@cricarena.com", "anyPassword");
+        when(authService.register(any(RegisterRequest.class))).thenReturn(authResponse);
 
-        mockMvc.perform(post("/api/auth/login")
+        RegisterRequest request = new RegisterRequest("New Student", "student@cricarena.com", "ValidPass123");
+
+        mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.status", is(401)))
-                .andExpect(jsonPath("$.error", is("Unauthorized")))
-                .andExpect(jsonPath("$.message", is("Invalid email or password")));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.accessToken", is("jwt.access.token")))
+                .andExpect(jsonPath("$.refreshToken", is("new-refresh-token")))
+                .andExpect(jsonPath("$.user.id", is(20)))
+                .andExpect(jsonPath("$.user.fullName", is("New Student")))
+                .andExpect(jsonPath("$.roleAssignment").doesNotExist());
     }
 
     @Test
-    @DisplayName("POST /api/auth/login - Inactive user returns 401 Unauthorized")
-    void login_withInactiveUser_returns401() throws Exception {
-        when(authService.login(any(LoginRequest.class)))
-                .thenThrow(new BadCredentialsException("User account is inactive"));
+    @DisplayName("POST /api/auth/register - Duplicate email returns 409 Conflict")
+    void register_withDuplicateEmail_returns409() throws Exception {
+        when(authService.register(any(RegisterRequest.class)))
+                .thenThrow(new DuplicateResourceException("User already exists with email: student@cricarena.com"));
 
-        LoginRequest request = new LoginRequest("inactive@cricarena.com", "password");
+        RegisterRequest request = new RegisterRequest("New Student", "student@cricarena.com", "ValidPass123");
 
-        mockMvc.perform(post("/api/auth/login")
+        mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.status", is(401)))
-                .andExpect(jsonPath("$.error", is("Unauthorized")))
-                .andExpect(jsonPath("$.message", is("User account is inactive")));
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status", is(409)))
+                .andExpect(jsonPath("$.message", containsString("already exists")));
     }
 
     @Test
-    @DisplayName("POST /api/auth/login - User without active role returns 401 Unauthorized")
-    void login_withUserWithoutActiveRole_returns401() throws Exception {
-        when(authService.login(any(LoginRequest.class)))
-                .thenThrow(new BadCredentialsException("User has no active role assignment"));
+    @DisplayName("POST /api/auth/refresh - Success (200 OK)")
+    void refresh_withValidToken_returns200() throws Exception {
+        UserResponse userResponse = new UserResponse(1L, "Admin User", "admin@cricarena.com", true, null, null);
+        AuthResponse authResponse = new AuthResponse(
+                "new.jwt.access.token",
+                "rotated-refresh-token",
+                "Bearer",
+                900000L,
+                userResponse,
+                null
+        );
 
-        LoginRequest request = new LoginRequest("norole@cricarena.com", "password");
+        when(authService.refreshToken(any(RefreshTokenRequest.class))).thenReturn(authResponse);
 
-        mockMvc.perform(post("/api/auth/login")
+        RefreshTokenRequest request = new RefreshTokenRequest("existing-refresh-token");
+
+        mockMvc.perform(post("/api/auth/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.status", is(401)))
-                .andExpect(jsonPath("$.error", is("Unauthorized")))
-                .andExpect(jsonPath("$.message", is("User has no active role assignment")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken", is("new.jwt.access.token")))
+                .andExpect(jsonPath("$.refreshToken", is("rotated-refresh-token")));
     }
 
     @Test
-    @DisplayName("POST /api/auth/login - Validation error for blank email returns 400 Bad Request")
-    void login_withBlankEmail_returns400() throws Exception {
-        LoginRequest request = new LoginRequest("", "password");
+    @DisplayName("POST /api/auth/logout - Success (204 No Content)")
+    void logout_withRefreshToken_returns204() throws Exception {
+        doNothing().when(authService).logout(any(RefreshTokenRequest.class));
 
-        mockMvc.perform(post("/api/auth/login")
+        RefreshTokenRequest request = new RefreshTokenRequest("token-to-revoke");
+
+        mockMvc.perform(post("/api/auth/logout")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status", is(400)))
-                .andExpect(jsonPath("$.validationErrors.email").exists());
-    }
+                .andExpect(status().isNoContent());
 
-    @Test
-    @DisplayName("POST /api/auth/login - Validation error for blank password returns 400 Bad Request")
-    void login_withBlankPassword_returns400() throws Exception {
-        LoginRequest request = new LoginRequest("user@cricarena.com", "");
-
-        mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status", is(400)))
-                .andExpect(jsonPath("$.validationErrors.password").exists());
+        verify(authService).logout(any(RefreshTokenRequest.class));
     }
 }

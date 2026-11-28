@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 1200" width="1700" height="1200">
+  <defs>
+    <style>
+      .font-sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+      .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      
+      /* Typography */
+      .doc-title { font-size: 19px; font-weight: 800; fill: #0f172a; letter-spacing: 0.5px; }
+      .doc-subtitle { font-size: 12.5px; font-weight: 500; fill: #475569; }
+      .meta-tag { font-size: 11px; font-weight: 600; fill: #0284c7; }
+      
+      .boundary-title { font-size: 14px; font-weight: 800; fill: #0369a1; letter-spacing: 0.6px; }
+      .boundary-sub { font-size: 11px; font-weight: 600; fill: #64748b; }
+      
+      .actor-label { font-size: 12.5px; font-weight: 700; fill: #0f172a; text-anchor: middle; }
+      .actor-sub { font-size: 10px; font-weight: 600; fill: #64748b; text-anchor: middle; }
+      
+      .uc-text { font-size: 11.5px; font-weight: 600; fill: #0f172a; text-anchor: middle; }
+      .uc-text-sub { font-size: 9.5px; font-weight: 500; fill: #64748b; text-anchor: middle; }
+      
+      .rel-label { font-size: 10px; font-weight: 700; fill: #0284c7; text-anchor: middle; }
+      
+      .caption-main { font-size: 15px; font-weight: 800; fill: #0f172a; text-anchor: middle; }
+      .caption-sub { font-size: 11.5px; font-weight: 500; fill: #475569; text-anchor: middle; }
+      
+      /* UML Elements */
+      .usecase-oval { fill: #ffffff; stroke: #0284c7; stroke-width: 1.5; }
+      .usecase-oval:hover { fill: #f0f9ff; }
+      .usecase-shared { fill: #f8fafc; stroke: #475569; stroke-width: 1.5; }
+      
+      .assoc-line { stroke: #334155; stroke-width: 1.4; fill: none; }
+      .dashed-rel { stroke: #0284c7; stroke-width: 1.3; stroke-dasharray: 4, 3; fill: none; }
+      
+      .actor-head { fill: #ffffff; stroke: #0f172a; stroke-width: 2; }
+      .actor-body { stroke: #0f172a; stroke-width: 2; stroke-linecap: round; }
+    </style>
+
+    <!-- Markers for <<include>> and <<extend>> -->
+    <marker id="open-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="#0284c7" stroke-width="1.4" />
+    </marker>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect x="0" y="0" width="1700" height="1200" fill="#ffffff" />
+  
+  <!-- Outer Document Border -->
+  <rect x="25" y="20" width="1650" height="1155" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" />
+
+  <!-- ======================================================== -->
+  <!-- HEADER BANNER                                            -->
+  <!-- ======================================================== -->
+  <g transform="translate(50, 32)">
+    <text x="0" y="20" class="font-sans doc-title">CRICARENA — UML USE CASE DIAGRAM</text>
+    <text x="0" y="38" class="font-sans doc-subtitle">Role-Based Actor Functional Modeling across Administration, Student Captaincy, and Public Domains</text>
+    <rect x="1110" y="6" width="490" height="32" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+    <text x="1355" y="26" class="font-mono meta-tag" text-anchor="middle">STANDARD UML 2.5 NOTATION | ACADEMIC SPECIFICATION</text>
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- SYSTEM BOUNDARY                                          -->
+  <!-- ======================================================== -->
+  <g transform="translate(260, 85)">
+    <!-- Boundary Box -->
+    <rect x="0" y="0" width="1180" height="1025" rx="8" fill="#fcfdfe" stroke="#0284c7" stroke-width="1.8" />
+    
+    <!-- Boundary Header -->
+    <rect x="0" y="0" width="1180" height="32" rx="8" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.8" />
+    <rect x="0" y="24" width="1180" height="8" fill="#f0f9ff" />
+    <text x="590" y="21" class="font-sans boundary-title" text-anchor="middle">System: CricArena – College Cricket Tournament Management and Live Scoring System</text>
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- UML ACTORS (Outside Boundary)                            -->
+  <!-- ======================================================== -->
+
+  <!-- ACTOR 1: Platform Administrator (Top Left) -->
+  <g transform="translate(130, 200)">
+    <circle cx="0" cy="-35" r="16" class="actor-head" />
+    <line x1="0" y1="-19" x2="0" y2="15" class="actor-body" />
+    <line x1="-24" y1="-7" x2="24" y2="-7" class="actor-body" />
+    <line x1="0" y1="15" x2="-18" y2="45" class="actor-body" />
+    <line x1="0" y1="15" x2="18" y2="45" class="actor-body" />
+    <text x="0" y="65" class="font-sans actor-label">Platform Administrator</text>
+    <text x="0" y="78" class="font-sans actor-sub">[ROLE: PLATFORM_ADMIN]</text>
+  </g>
+
+  <!-- ACTOR 2: College Administrator (Middle Left) -->
+  <g transform="translate(130, 560)">
+    <circle cx="0" cy="-35" r="16" class="actor-head" />
+    <line x1="0" y1="-19" x2="0" y2="15" class="actor-body" />
+    <line x1="-24" y1="-7" x2="24" y2="-7" class="actor-body" />
+    <line x1="0" y1="15" x2="-18" y2="45" class="actor-body" />
+    <line x1="0" y1="15" x2="18" y2="45" class="actor-body" />
+    <text x="0" y="65" class="font-sans actor-label">College Administrator</text>
+    <text x="0" y="78" class="font-sans actor-sub">[ROLE: COLLEGE_ADMIN]</text>
+  </g>
+
+  <!-- ACTOR 3: Team Captain (Bottom Left) -->
+  <g transform="translate(130, 930)">
+    <circle cx="0" cy="-35" r="16" class="actor-head" />
+    <line x1="0" y1="-19" x2="0" y2="15" class="actor-body" />
+    <line x1="-24" y1="-7" x2="24" y2="-7" class="actor-body" />
+    <line x1="0" y1="15" x2="-18" y2="45" class="actor-body" />
+    <line x1="0" y1="15" x2="18" y2="45" class="actor-body" />
+    <text x="0" y="65" class="font-sans actor-label">Team Captain</text>
+    <text x="0" y="78" class="font-sans actor-sub">[ROLE: TEAM_CAPTAIN]</text>
+  </g>
+
+  <!-- ACTOR 4: Registered Student / Normal User (Top Right) -->
+  <g transform="translate(1570, 310)">
+    <circle cx="0" cy="-35" r="16" class="actor-head" />
+    <line x1="0" y1="-19" x2="0" y2="15" class="actor-body" />
+    <line x1="-24" y1="-7" x2="24" y2="-7" class="actor-body" />
+    <line x1="0" y1="15" x2="-18" y2="45" class="actor-body" />
+    <line x1="0" y1="15" x2="18" y2="45" class="actor-body" />
+    <text x="0" y="65" class="font-sans actor-label">Registered Student</text>
+    <text x="0" y="78" class="font-sans actor-sub">/ Normal User [MEMBER]</text>
+  </g>
+
+  <!-- ACTOR 5: Public Visitor (Guest) (Bottom Right) -->
+  <g transform="translate(1570, 800)">
+    <circle cx="0" cy="-35" r="16" class="actor-head" />
+    <line x1="0" y1="-19" x2="0" y2="15" class="actor-body" />
+    <line x1="-24" y1="-7" x2="24" y2="-7" class="actor-body" />
+    <line x1="0" y1="15" x2="-18" y2="45" class="actor-body" />
+    <line x1="0" y1="15" x2="18" y2="45" class="actor-body" />
+    <text x="0" y="65" class="font-sans actor-label">Public Visitor</text>
+    <text x="0" y="78" class="font-sans actor-sub">(Unauthenticated Guest)</text>
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- SOLID ASSOCIATION LINES (Actor to Use Cases)             -->
+  <!-- ======================================================== -->
+
+  <!-- Platform Admin Associations -->
+  <path d="M 180 200 L 400 150" class="assoc-line" />
+  <path d="M 180 200 L 400 205" class="assoc-line" />
+  <path d="M 180 200 L 400 260" class="assoc-line" />
+  <path d="M 180 200 L 400 315" class="assoc-line" />
+  <path d="M 180 200 L 400 370" class="assoc-line" />
+  <path d="M 180 200 L 850 145" class="assoc-line" /> <!-- Login -->
+
+  <!-- College Admin Associations -->
+  <path d="M 180 560 L 415 440" class="assoc-line" /> <!-- Manage College Tournaments -->
+  <path d="M 180 560 L 415 495" class="assoc-line" /> <!-- View Registered Teams -->
+  <path d="M 180 560 L 415 550" class="assoc-line" /> <!-- Register Teams for Tournaments -->
+  <path d="M 180 560 L 415 605" class="assoc-line" /> <!-- Schedule Matches -->
+  <path d="M 180 560 L 415 660" class="assoc-line" /> <!-- Review Captain Applications -->
+  <path d="M 180 560 L 415 715" class="assoc-line" /> <!-- Transfer Team Captaincy -->
+  <path d="M 180 560 L 850 145" class="assoc-line" /> <!-- Login -->
+
+  <!-- Team Captain Associations -->
+  <path d="M 180 930 L 415 805" class="assoc-line" /> <!-- Manage Team -->
+  <path d="M 180 930 L 415 860" class="assoc-line" /> <!-- Manage Player Roster -->
+  <path d="M 180 930 L 415 915" class="assoc-line" /> <!-- Register Team for Tournament -->
+  <path d="M 180 930 L 415 970" class="assoc-line" /> <!-- Manage Tournament Squad -->
+  <path d="M 180 930 L 850 145" class="assoc-line" /> <!-- Login -->
+
+  <!-- Registered Student Associations -->
+  <path d="M 1520 310 L 1290 195" class="assoc-line" /> <!-- Register Account -->
+  <path d="M 1520 310 L 980 145" class="assoc-line" />  <!-- Login -->
+  <path d="M 1520 310 L 1280 255" class="assoc-line" /> <!-- Select or Switch College -->
+  <path d="M 1520 310 L 1280 315" class="assoc-line" /> <!-- Browse Tournaments -->
+  <path d="M 1520 310 L 1280 375" class="assoc-line" /> <!-- Apply for Team Captaincy -->
+  <path d="M 1520 310 L 1280 435" class="assoc-line" /> <!-- View Application History -->
+
+  <!-- Public Visitor Associations -->
+  <path d="M 1520 800 L 1280 680" class="assoc-line" /> <!-- Browse Active Colleges -->
+  <path d="M 1520 800 L 1280 740" class="assoc-line" /> <!-- View Tournaments -->
+  <path d="M 1520 800 L 1280 800" class="assoc-line" /> <!-- View Matches -->
+  <path d="M 1520 800 L 1280 860" class="assoc-line" /> <!-- Access Available Public Scorecards -->
+
+  <!-- ======================================================== -->
+  <!-- USE CASE OVALS                                           -->
+  <!-- ======================================================== -->
+
+  <!-- SHARED CORE: Login / Authenticate (Center Top) -->
+  <g transform="translate(915, 145)">
+    <ellipse cx="0" cy="0" rx="95" ry="24" class="usecase-shared" />
+    <text x="0" y="4" class="font-sans uc-text" font-weight="700">Login / Authenticate</text>
+    <text x="0" y="15" class="font-sans uc-text-sub">[JWT Bearer Token Exchange]</text>
+  </g>
+
+  <!-- ---------------------------------------------------- -->
+  <!-- 1. PLATFORM ADMINISTRATOR USE CASES (Top-Left)       -->
+  <!-- ---------------------------------------------------- -->
+  <g transform="translate(515, 150)">
+    <ellipse cx="0" cy="0" rx="115" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Manage Colleges</text>
+  </g>
+
+  <g transform="translate(515, 205)">
+    <ellipse cx="0" cy="0" rx="125" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">View Platform-Wide Tournaments</text>
+  </g>
+
+  <g transform="translate(515, 260)">
+    <ellipse cx="0" cy="0" rx="135" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Create College Admin Invitation</text>
+  </g>
+
+  <g transform="translate(515, 315)">
+    <ellipse cx="0" cy="0" rx="110" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">View Invitations</text>
+  </g>
+
+  <g transform="translate(515, 370)">
+    <ellipse cx="0" cy="0" rx="130" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Revoke or Resend Invitations</text>
+  </g>
+
+  <!-- Extend: Revoke/Resend extends View Invitations -->
+  <path d="M 515 347 L 515 338" class="dashed-rel" marker-end="url(#open-arrow)" />
+  <rect x="522" y="338" width="58" height="15" rx="3" fill="#ffffff" stroke="#bae6fd" stroke-width="0.8" />
+  <text x="551" y="349" class="font-sans rel-label">&lt;&lt;extend&gt;&gt;</text>
+
+
+  <!-- ---------------------------------------------------- -->
+  <!-- 2. COLLEGE ADMINISTRATOR USE CASES (Mid-Left)        -->
+  <!-- ---------------------------------------------------- -->
+  <g transform="translate(535, 440)">
+    <ellipse cx="0" cy="0" rx="130" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Manage College Tournaments</text>
+  </g>
+
+  <!-- Publish Tournament (Extension of Manage Tournaments) -->
+  <g transform="translate(845, 440)">
+    <ellipse cx="0" cy="0" rx="110" ry="23" class="usecase-oval" />
+    <text x="0" y="0" class="font-sans uc-text">Publish Tournament</text>
+    <text x="0" y="12" class="font-sans uc-text-sub">[DRAFT -> PUBLISHED]</text>
+  </g>
+  <path d="M 735 440 L 665 440" class="dashed-rel" marker-end="url(#open-arrow)" />
+  <rect x="670" y="425" width="58" height="15" rx="3" fill="#ffffff" stroke="#bae6fd" stroke-width="0.8" />
+  <text x="699" y="436" class="font-sans rel-label">&lt;&lt;extend&gt;&gt;</text>
+
+  <g transform="translate(535, 495)">
+    <ellipse cx="0" cy="0" rx="120" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">View Registered Teams</text>
+  </g>
+
+  <g transform="translate(535, 550)">
+    <ellipse cx="0" cy="0" rx="135" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Register Teams for Tournaments</text>
+  </g>
+
+  <g transform="translate(535, 605)">
+    <ellipse cx="0" cy="0" rx="110" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Schedule Matches</text>
+  </g>
+
+  <g transform="translate(535, 660)">
+    <ellipse cx="0" cy="0" rx="130" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Review Captain Applications</text>
+  </g>
+
+  <!-- Approve / Reject Captain Applications (Extension) -->
+  <g transform="translate(855, 660)">
+    <ellipse cx="0" cy="0" rx="125" ry="23" class="usecase-oval" />
+    <text x="0" y="0" class="font-sans uc-text">Approve or Reject Applications</text>
+    <text x="0" y="12" class="font-sans uc-text-sub">[Assigns TEAM_CAPTAIN Role]</text>
+  </g>
+  <path d="M 730 660 L 665 660" class="dashed-rel" marker-end="url(#open-arrow)" />
+  <rect x="668" y="645" width="58" height="15" rx="3" fill="#ffffff" stroke="#bae6fd" stroke-width="0.8" />
+  <text x="697" y="656" class="font-sans rel-label">&lt;&lt;extend&gt;&gt;</text>
+
+  <g transform="translate(535, 715)">
+    <ellipse cx="0" cy="0" rx="125" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Transfer Team Captaincy</text>
+  </g>
+
+
+  <!-- ---------------------------------------------------- -->
+  <!-- 3. TEAM CAPTAIN USE CASES (Bottom-Left & Center)     -->
+  <!-- ---------------------------------------------------- -->
+  <g transform="translate(535, 805)">
+    <ellipse cx="0" cy="0" rx="105" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Manage Team</text>
+  </g>
+
+  <g transform="translate(535, 860)">
+    <ellipse cx="0" cy="0" rx="120" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Manage Player Roster</text>
+  </g>
+
+  <g transform="translate(535, 915)">
+    <ellipse cx="0" cy="0" rx="135" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Register Team for Tournament</text>
+  </g>
+
+  <g transform="translate(535, 970)">
+    <ellipse cx="0" cy="0" rx="145" ry="23" class="usecase-oval" />
+    <text x="0" y="0" class="font-sans uc-text">Manage Tournament Squad</text>
+    <text x="0" y="12" class="font-sans uc-text-sub">(Maximum 15 Players Roster)</text>
+  </g>
+
+  <!-- Select Match Playing XI (Included from Squad Management) -->
+  <g transform="translate(905, 970)">
+    <ellipse cx="0" cy="0" rx="140" ry="23" class="usecase-oval" />
+    <text x="0" y="0" class="font-sans uc-text">Select Match Playing XI</text>
+    <text x="0" y="12" class="font-sans uc-text-sub">(Exactly 11 Nominated Players)</text>
+  </g>
+  <!-- <<include>> from Select Playing XI to Manage Tournament Squad -->
+  <path d="M 765 970 L 680 970" class="dashed-rel" marker-end="url(#open-arrow)" />
+  <rect x="692" y="955" width="62" height="15" rx="3" fill="#ffffff" stroke="#bae6fd" stroke-width="0.8" />
+  <text x="723" y="966" class="font-sans rel-label">&lt;&lt;include&gt;&gt;</text>
+
+
+  <!-- ---------------------------------------------------- -->
+  <!-- 4. REGISTERED STUDENT / NORMAL USER (Top-Right)      -->
+  <!-- ---------------------------------------------------- -->
+  <g transform="translate(1160, 195)">
+    <ellipse cx="0" cy="0" rx="110" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Register Account</text>
+  </g>
+
+  <g transform="translate(1160, 255)">
+    <ellipse cx="0" cy="0" rx="120" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Select or Switch College</text>
+  </g>
+
+  <g transform="translate(1160, 315)">
+    <ellipse cx="0" cy="0" rx="115" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Browse Tournaments</text>
+  </g>
+
+  <g transform="translate(1160, 375)">
+    <ellipse cx="0" cy="0" rx="130" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Apply for Team Captaincy</text>
+  </g>
+
+  <g transform="translate(1160, 435)">
+    <ellipse cx="0" cy="0" rx="125" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">View Application History</text>
+  </g>
+
+
+  <!-- ---------------------------------------------------- -->
+  <!-- 5. PUBLIC VISITOR (GUEST) USE CASES (Bottom-Right)   -->
+  <!-- ---------------------------------------------------- -->
+  <g transform="translate(1160, 680)">
+    <ellipse cx="0" cy="0" rx="120" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">Browse Active Colleges</text>
+  </g>
+
+  <g transform="translate(1160, 740)">
+    <ellipse cx="0" cy="0" rx="115" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">View Tournaments</text>
+  </g>
+
+  <g transform="translate(1160, 800)">
+    <ellipse cx="0" cy="0" rx="110" ry="23" class="usecase-oval" />
+    <text x="0" y="4" class="font-sans uc-text">View Matches</text>
+  </g>
+
+  <g transform="translate(1160, 860)">
+    <ellipse cx="0" cy="0" rx="145" ry="23" class="usecase-oval" />
+    <text x="0" y="0" class="font-sans uc-text">Access Public Scorecards</text>
+    <text x="0" y="12" class="font-sans uc-text-sub">(Overs, Runs, Wickets, Bat/Bowl Figures)</text>
+  </g>
+
+  <!-- Informative Note inside system boundary on scoring engine status -->
+  <g transform="translate(860, 770)">
+    <rect x="0" y="0" width="220" height="48" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3, 3" />
+    <text x="110" y="18" class="font-sans uc-text-sub" font-weight="700" fill="#475569" text-anchor="middle">Implementation Audit Note:</text>
+    <text x="110" y="32" class="font-sans uc-text-sub" fill="#64748b" text-anchor="middle">Live scoring engine implemented in</text>
+    <text x="110" y="43" class="font-sans uc-text-sub" fill="#64748b" text-anchor="middle">backend; operator keypad in development.</text>
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- CAPTION                                                  -->
+  <!-- ======================================================== -->
+  <g transform="translate(850, 1145)">
+    <text x="0" y="0" class="font-sans caption-main">Figure 4.3: Use Case Diagram of CricArena</text>
+    <text x="0" y="18" class="font-sans caption-sub">UML 2.5 use case specification delineating interactions across Platform Admin, College Admin, Team Captain, Registered Student, and Public Visitor roles.</text>
+  </g>
+</svg>

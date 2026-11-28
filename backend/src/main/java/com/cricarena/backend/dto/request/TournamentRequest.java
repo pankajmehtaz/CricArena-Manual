@@ -25,6 +25,12 @@ public class TournamentRequest {
     @NotNull(message = "End date is required")
     private LocalDate endDate;
 
+    private Long collegeId;
+
+    private java.time.LocalDateTime registrationOpensAt;
+
+    private java.time.LocalDateTime registrationDeadline;
+
     public TournamentRequest() {
     }
 
@@ -42,6 +48,38 @@ public class TournamentRequest {
             return true;
         }
         return !endDate.isBefore(startDate);
+    }
+
+    @AssertTrue(message = "Registration deadline must not be before registration opening date")
+    public boolean isRegistrationDeadlineValid() {
+        if (registrationOpensAt == null || registrationDeadline == null) {
+            return true;
+        }
+        return !registrationDeadline.isBefore(registrationOpensAt);
+    }
+
+    public Long getCollegeId() {
+        return collegeId;
+    }
+
+    public void setCollegeId(Long collegeId) {
+        this.collegeId = collegeId;
+    }
+
+    public java.time.LocalDateTime getRegistrationOpensAt() {
+        return registrationOpensAt;
+    }
+
+    public void setRegistrationOpensAt(java.time.LocalDateTime registrationOpensAt) {
+        this.registrationOpensAt = registrationOpensAt;
+    }
+
+    public java.time.LocalDateTime getRegistrationDeadline() {
+        return registrationDeadline;
+    }
+
+    public void setRegistrationDeadline(java.time.LocalDateTime registrationDeadline) {
+        this.registrationDeadline = registrationDeadline;
     }
 
     public String getName() {

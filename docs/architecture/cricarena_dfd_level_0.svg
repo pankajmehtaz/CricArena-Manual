@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 1200" width="1700" height="1200">
+  <defs>
+    <style>
+      .font-sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+      .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      
+      /* Typography */
+      .doc-title { font-size: 19px; font-weight: 800; fill: #0f172a; letter-spacing: 0.5px; }
+      .doc-subtitle { font-size: 12.5px; font-weight: 500; fill: #475569; }
+      .meta-tag { font-size: 11px; font-weight: 600; fill: #0284c7; }
+      
+      .entity-title { font-size: 13px; font-weight: 700; fill: #0f172a; text-anchor: middle; }
+      .entity-sub { font-size: 10px; font-weight: 600; fill: #64748b; text-anchor: middle; }
+      
+      .process-num { font-size: 14px; font-weight: 800; fill: #0284c7; }
+      .process-title { font-size: 15px; font-weight: 800; fill: #0f172a; }
+      .process-sub { font-size: 11px; font-weight: 600; fill: #475569; }
+      .process-item { font-size: 10.5px; font-weight: 500; fill: #1e293b; }
+      
+      .datastore-id { font-size: 13px; font-weight: 800; fill: #7c3aed; }
+      .datastore-title { font-size: 14px; font-weight: 700; fill: #0f172a; }
+      .datastore-sub { font-size: 11px; font-weight: 500; fill: #475569; }
+      .datastore-table { font-size: 10px; font-weight: 600; fill: #6b21a8; font-family: ui-monospace, monospace; }
+      
+      .flow-label { font-size: 9.5px; font-weight: 600; fill: #1e293b; }
+      .flow-label-right { font-size: 9.5px; font-weight: 600; fill: #1e293b; text-anchor: end; }
+      
+      .caption-main { font-size: 15px; font-weight: 800; fill: #0f172a; text-anchor: middle; }
+      .caption-sub { font-size: 11.5px; font-weight: 500; fill: #475569; text-anchor: middle; }
+      
+      /* Visual Styles */
+      .entity-box { fill: #f8fafc; stroke: #334155; stroke-width: 1.6; }
+      .process-box { fill: #ffffff; stroke: #0284c7; stroke-width: 2; }
+      .datastore-box { fill: #faf5ff; stroke: #7c3aed; stroke-width: 1.8; }
+      
+      .flow-line { stroke: #0284c7; stroke-width: 1.4; fill: none; }
+      .flow-line-db { stroke: #7c3aed; stroke-width: 1.4; fill: none; }
+      .flow-line-resp { stroke: #64748b; stroke-width: 1.2; stroke-dasharray: 4, 3; fill: none; }
+    </style>
+
+    <!-- Flow Arrow Markers -->
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 z" fill="#0284c7" />
+    </marker>
+    <marker id="arrow-slate" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 z" fill="#64748b" />
+    </marker>
+    <marker id="arrow-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 z" fill="#7c3aed" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1700" height="1200" fill="#ffffff" />
+  <rect x="25" y="20" width="1650" height="1155" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" />
+
+  <!-- ======================================================== -->
+  <!-- HEADER BANNER                                            -->
+  <!-- ======================================================== -->
+  <g transform="translate(50, 32)">
+    <text x="0" y="20" class="font-sans doc-title">CRICARENA — DATA FLOW DIAGRAM (LEVEL 0)</text>
+    <text x="0" y="38" class="font-sans doc-subtitle">Context-Level Environmental Interactions, Main System Transformation, and Relational Data Store Exchanges</text>
+    <rect x="1150" y="6" width="450" height="32" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+    <text x="1375" y="26" class="font-mono meta-tag" text-anchor="middle">GANE &amp; SARSON / YOURDON DFD SPECIFICATION</text>
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- 1. EXTERNAL ENTITIES (Terminators)                       -->
+  <!-- ======================================================== -->
+
+  <!-- ENTITY 1: Platform Administrator (Top-Left) -->
+  <g transform="translate(50, 110)">
+    <rect x="0" y="0" width="230" height="70" rx="4" class="entity-box" />
+    <path d="M 0 0 L 12 0 L 12 70 L 0 70 Z" fill="#334155" />
+    <text x="125" y="30" class="font-sans entity-title">Platform Administrator</text>
+    <text x="125" y="47" class="font-sans entity-sub">Global System Operator</text>
+    <text x="125" y="60" class="font-mono entity-sub">[ROLE: PLATFORM_ADMIN]</text>
+  </g>
+
+  <!-- ENTITY 2: College Administrator (Mid-Left) -->
+  <g transform="translate(50, 370)">
+    <rect x="0" y="0" width="230" height="70" rx="4" class="entity-box" />
+    <path d="M 0 0 L 12 0 L 12 70 L 0 70 Z" fill="#334155" />
+    <text x="125" y="30" class="font-sans entity-title">College Administrator</text>
+    <text x="125" y="47" class="font-sans entity-sub">Institutional Tenant Admin</text>
+    <text x="125" y="60" class="font-mono entity-sub">[ROLE: COLLEGE_ADMIN]</text>
+  </g>
+
+  <!-- ENTITY 3: Team Captain (Bottom-Left) -->
+  <g transform="translate(50, 630)">
+    <rect x="0" y="0" width="230" height="70" rx="4" class="entity-box" />
+    <path d="M 0 0 L 12 0 L 12 70 L 0 70 Z" fill="#334155" />
+    <text x="125" y="30" class="font-sans entity-title">Team Captain</text>
+    <text x="125" y="47" class="font-sans entity-sub">Squad Leader &amp; Field Captain</text>
+    <text x="125" y="60" class="font-mono entity-sub">[ROLE: TEAM_CAPTAIN]</text>
+  </g>
+
+  <!-- ENTITY 4: Registered Student / Normal User (Top-Right) -->
+  <g transform="translate(1420, 140)">
+    <rect x="0" y="0" width="230" height="70" rx="4" class="entity-box" />
+    <path d="M 218 0 L 230 0 L 230 70 L 218 70 Z" fill="#334155" />
+    <text x="110" y="30" class="font-sans entity-title">Registered Student</text>
+    <text x="110" y="47" class="font-sans entity-sub">Authenticated Member Account</text>
+    <text x="110" y="60" class="font-mono entity-sub">[ROLE: MEMBER]</text>
+  </g>
+
+  <!-- ENTITY 5: Public Visitor (Guest) (Mid-Right) -->
+  <g transform="translate(1420, 480)">
+    <rect x="0" y="0" width="230" height="70" rx="4" class="entity-box" />
+    <path d="M 218 0 L 230 0 L 230 70 L 218 70 Z" fill="#334155" />
+    <text x="110" y="30" class="font-sans entity-title">Public Visitor</text>
+    <text x="110" y="47" class="font-sans entity-sub">Unauthenticated Spectator</text>
+    <text x="110" y="60" class="font-mono entity-sub">[ANONYMOUS GUEST]</text>
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- 2. CENTRAL SYSTEM PROCESS (Process 0)                    -->
+  <!-- ======================================================== -->
+  <g transform="translate(590, 100)">
+    <!-- Main Process Outer Shell -->
+    <rect x="0" y="0" width="520" height="630" rx="28" class="process-box" />
+    
+    <!-- Top Process Identifier Header Bar -->
+    <path d="M 0 28 Q 0 0 28 0 L 492 0 Q 520 0 520 28 L 520 54 L 0 54 Z" fill="#f0f9ff" />
+    <line x1="0" y1="54" x2="520" y2="54" stroke="#0284c7" stroke-width="1.8" />
+    <circle cx="36" cy="27" r="16" fill="#0284c7" />
+    <text x="36" y="32" class="font-sans" font-size="14" font-weight="800" fill="#ffffff" text-anchor="middle">0</text>
+    <text x="64" y="25" class="font-sans process-title">CricArena Platform</text>
+    <text x="64" y="42" class="font-sans process-sub">College Cricket Tournament Management &amp; Live Scoring System</text>
+
+    <!-- Sub-functions breakdown inside central process -->
+    <g transform="translate(20, 68)">
+      <rect x="0" y="0" width="480" height="540" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+      <text x="16" y="24" class="font-sans" font-size="12" font-weight="700" fill="#0369a1">Core Platform Sub-Processes &amp; Functional Transformations:</text>
+      
+      <!-- P1 -->
+      <rect x="16" y="36" width="448" height="48" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+      <text x="26" y="54" class="font-sans" font-size="11" font-weight="700" fill="#0f172a">0.1 User Authentication &amp; Multi-Tenant Authorization</text>
+      <text x="26" y="70" class="font-sans process-item">JWT token generation, BCrypt validation, stateless session &amp; role scoping</text>
+
+      <!-- P2 -->
+      <rect x="16" y="92" width="448" height="48" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+      <text x="26" y="110" class="font-sans" font-size="11" font-weight="700" fill="#0f172a">0.2 College &amp; Institutional Administration</text>
+      <text x="26" y="126" class="font-sans process-item">Campus registration, college codes, onboarding invitations &amp; admin delegation</text>
+
+      <!-- P3 -->
+      <rect x="16" y="148" width="448" height="48" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+      <text x="26" y="166" class="font-sans" font-size="11" font-weight="700" fill="#0f172a">0.3 Tournament Lifecycle Management</text>
+      <text x="26" y="182" class="font-sans process-item">INTRA/INTER formats, schedule dates, overs config &amp; state transitions</text>
+
+      <!-- P4 -->
+      <rect x="16" y="204" width="448" height="48" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+      <text x="26" y="222" class="font-sans" font-size="11" font-weight="700" fill="#0f172a">0.4 Captaincy Application &amp; Review Workflow</text>
+      <text x="26" y="238" class="font-sans process-item">Student applications, vision pitches, admin review &amp; TEAM_CAPTAIN assignment</text>
+
+      <!-- P5 -->
+      <rect x="16" y="260" width="448" height="48" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+      <text x="26" y="278" class="font-sans" font-size="11" font-weight="700" fill="#0f172a">0.5 Team Profiles &amp; Player Roster Registry</text>
+      <text x="26" y="294" class="font-sans process-item">Team codes, venues, player specializations, jersey uniqueness &amp; captain transfers</text>
+
+      <!-- P6 -->
+      <rect x="16" y="316" width="448" height="48" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+      <text x="26" y="334" class="font-sans" font-size="11" font-weight="700" fill="#0f172a">0.6 Tournament Squad &amp; Playing XI Nomination</text>
+      <text x="26" y="350" class="font-sans process-item">15-player tournament squad exclusivity (uk_ts_tournament_player) &amp; 11 Playing XI</text>
+
+      <!-- P7 -->
+      <rect x="16" y="372" width="448" height="54" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+      <text x="26" y="390" class="font-sans" font-size="11" font-weight="700" fill="#0f172a">0.7 Match Scheduling, Toss &amp; Cricket Scoring Engine</text>
+      <text x="26" y="406" class="font-sans process-item">Fixture dates, toss outcome, ball-by-ball deliveries, extras (wide/nb),</text>
+      <text x="26" y="419" class="font-sans process-item">7 dismissal types &amp; limited-overs innings completion state machine</text>
+
+      <!-- P8 -->
+      <rect x="16" y="434" width="448" height="48" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+      <text x="26" y="452" class="font-sans" font-size="11" font-weight="700" fill="#0f172a">0.8 Dynamic Scorecard Calculation &amp; Statistics</text>
+      <text x="26" y="468" class="font-sans process-item">Real-time strike rate, economy rate, boundary count &amp; match result derivation</text>
+
+      <!-- Audit Notice -->
+      <rect x="16" y="490" width="448" height="38" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1" />
+      <text x="26" y="506" class="font-sans" font-size="10.5" font-weight="700" fill="#15803d">• Audit Notice: Scoring Engine active in Backend API;</text>
+      <text x="26" y="520" class="font-sans" font-size="10" font-weight="500" fill="#166534">  Frontend operator scoring keypad currently scaffolded &amp; in development.</text>
+    </g>
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- 3. DATA STORE: D1 MySQL 8.0 (Bottom Center)              -->
+  <!-- ======================================================== -->
+  <g transform="translate(320, 830)">
+    <!-- Data Store Box: Open-ended horizontal bars (Standard DFD) -->
+    <rect x="0" y="0" width="1060" height="235" rx="6" class="datastore-box" />
+    
+    <!-- Top Bar of Store -->
+    <line x1="0" y1="0" x2="1060" y2="0" stroke="#7c3aed" stroke-width="3" />
+    <line x1="0" y1="235" x2="1060" y2="235" stroke="#7c3aed" stroke-width="3" />
+    
+    <!-- Left Indicator Column -->
+    <rect x="0" y="0" width="70" height="235" fill="#f3e8ff" />
+    <line x1="70" y1="0" x2="70" y2="235" stroke="#7c3aed" stroke-width="1.8" />
+    <text x="35" y="125" class="font-sans datastore-id" text-anchor="middle">D1</text>
+
+    <!-- Header inside Data Store -->
+    <text x="90" y="30" class="font-sans datastore-title">MySQL 8.0 Relational Database (cricarena)</text>
+    <text x="90" y="46" class="font-sans datastore-sub">15 Persistent Application Domain Tables Managed via Flyway Migrations (V1.0 - V1.11)</text>
+
+    <!-- Partitioned Tables Grid -->
+    <g transform="translate(90, 60)">
+      <!-- Box 1: Tenancy & Identity -->
+      <rect x="0" y="0" width="225" height="155" rx="4" fill="#ffffff" stroke="#ddd6fe" stroke-width="1" />
+      <text x="10" y="20" class="font-sans" font-size="11" font-weight="700" fill="#5b21b6">Identity &amp; Tenancy</text>
+      <text x="10" y="42" class="datastore-table">• colleges</text>
+      <text x="10" y="64" class="datastore-table">• users</text>
+      <text x="10" y="86" class="datastore-table">• user_role_assignments</text>
+      <text x="10" y="108" class="datastore-table">• user_invitations</text>
+      <text x="10" y="130" class="datastore-table">• refresh_tokens</text>
+
+      <!-- Box 2: Tournaments & Teams -->
+      <rect x="240" y="0" width="225" height="155" rx="4" fill="#ffffff" stroke="#ddd6fe" stroke-width="1" />
+      <text x="10" y="20" class="font-sans" font-size="11" font-weight="700" fill="#5b21b6">Competitions &amp; Clubs</text>
+      <text x="10" y="42" class="datastore-table">• tournaments</text>
+      <text x="10" y="64" class="datastore-table">• teams</text>
+      <text x="10" y="86" class="datastore-table">• players</text>
+      <text x="10" y="108" class="datastore-table">• captain_applications</text>
+      <text x="10" y="130" class="font-sans" font-size="9" fill="#64748b">(Virtual unique indexes)</text>
+
+      <!-- Box 3: Registrations & Squads -->
+      <rect x="480" y="0" width="230" height="155" rx="4" fill="#ffffff" stroke="#ddd6fe" stroke-width="1" />
+      <text x="10" y="20" class="font-sans" font-size="11" font-weight="700" fill="#5b21b6">Rosters &amp; Lineups</text>
+      <text x="10" y="42" class="datastore-table">• tournament_registrations</text>
+      <text x="10" y="64" class="font-sans" font-size="9" fill="#64748b">(M:N junction table)</text>
+      <text x="10" y="86" class="datastore-table">• tournament_squads</text>
+      <text x="10" y="108" class="font-sans" font-size="9" fill="#64748b">(15-player squad roster)</text>
+      <text x="10" y="130" class="datastore-table">• match_playing_xi</text>
+      <text x="10" y="145" class="font-sans" font-size="9" fill="#64748b">(11 nominated match players)</text>
+
+      <!-- Box 4: Match Event Stream -->
+      <rect x="725" y="0" width="225" height="155" rx="4" fill="#ffffff" stroke="#ddd6fe" stroke-width="1" />
+      <text x="10" y="20" class="font-sans" font-size="11" font-weight="700" fill="#5b21b6">Scoring &amp; Deliveries</text>
+      <text x="10" y="42" class="datastore-table">• matches</text>
+      <text x="10" y="64" class="font-sans" font-size="9" fill="#64748b">(Status, venues, toss, win)</text>
+      <text x="10" y="86" class="datastore-table">• match_innings</text>
+      <text x="10" y="108" class="font-sans" font-size="9" fill="#64748b">(1st &amp; 2nd innings totals)</text>
+      <text x="10" y="130" class="datastore-table">• match_deliveries</text>
+      <text x="10" y="145" class="font-sans" font-size="9" fill="#64748b">(Ball-by-ball event stream)</text>
+    </g>
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- 4. DATA FLOWS (Left Side: Admin & Captain Flows)         -->
+  <!-- ======================================================== -->
+
+  <!-- Platform Admin Flows -->
+  <!-- Admin -> System -->
+  <path d="M 280 135 L 590 135" class="flow-line" marker-end="url(#arrow-blue)" />
+  <rect x="295" y="121" width="280" height="14" rx="2" fill="#ffffff" />
+  <text x="298" y="132" class="font-sans flow-label">Admin credentials, college data, invitation requests</text>
+
+  <!-- System -> Admin -->
+  <path d="M 590 160 L 280 160" class="flow-line-resp" marker-end="url(#arrow-slate)" />
+  <rect x="295" y="162" width="280" height="14" rx="2" fill="#ffffff" />
+  <text x="298" y="173" class="font-sans flow-label">Auth JWT token, colleges list, invitation audit logs</text>
+
+
+  <!-- College Admin Flows -->
+  <!-- College Admin -> System -->
+  <path d="M 280 390 L 590 390" class="flow-line" marker-end="url(#arrow-blue)" />
+  <rect x="295" y="376" width="280" height="14" rx="2" fill="#ffffff" />
+  <text x="298" y="387" class="font-sans flow-label">Tournament configs, matches, captain approvals</text>
+
+  <!-- System -> College Admin -->
+  <path d="M 590 415 L 280 415" class="flow-line-resp" marker-end="url(#arrow-slate)" />
+  <rect x="295" y="417" width="280" height="14" rx="2" fill="#ffffff" />
+  <text x="298" y="428" class="font-sans flow-label">Auth JWT, pending captain applications, fixtures</text>
+
+
+  <!-- Team Captain Flows -->
+  <!-- Team Captain -> System -->
+  <path d="M 280 650 L 590 650" class="flow-line" marker-end="url(#arrow-blue)" />
+  <rect x="295" y="636" width="280" height="14" rx="2" fill="#ffffff" />
+  <text x="298" y="647" class="font-sans flow-label">Team updates, 15-player squads, 11 Playing XI</text>
+
+  <!-- System -> Team Captain -->
+  <path d="M 590 675 L 280 675" class="flow-line-resp" marker-end="url(#arrow-slate)" />
+  <rect x="295" y="677" width="280" height="14" rx="2" fill="#ffffff" />
+  <text x="298" y="688" class="font-sans flow-label">Auth JWT, player roster status, squad confirmation</text>
+
+  <!-- ======================================================== -->
+  <!-- 5. DATA FLOWS (Right Side: Student & Public Flows)       -->
+  <!-- ======================================================== -->
+
+  <!-- Registered Student Flows -->
+  <!-- Student -> System -->
+  <path d="M 1420 165 L 1110 165" class="flow-line" marker-end="url(#arrow-blue)" />
+  <rect x="1125" y="151" width="280" height="14" rx="2" fill="#ffffff" />
+  <text x="1402" y="162" class="font-sans flow-label-right">Registration data, credentials, captaincy applications</text>
+
+  <!-- System -> Student -->
+  <path d="M 1110 190 L 1420 190" class="flow-line-resp" marker-end="url(#arrow-slate)" />
+  <rect x="1125" y="192" width="280" height="14" rx="2" fill="#ffffff" />
+  <text x="1402" y="203" class="font-sans flow-label-right">Auth token, tournaments, student application status</text>
+
+
+  <!-- Public Visitor Flows -->
+  <!-- Visitor -> System -->
+  <path d="M 1420 500 L 1110 500" class="flow-line" marker-end="url(#arrow-blue)" />
+  <rect x="1125" y="486" width="280" height="14" rx="2" fill="#ffffff" />
+  <text x="1402" y="497" class="font-sans flow-label-right">College filter, tournament &amp; scorecard queries</text>
+
+  <!-- System -> Visitor -->
+  <path d="M 1110 525 L 1420 525" class="flow-line-resp" marker-end="url(#arrow-slate)" />
+  <rect x="1125" y="527" width="280" height="14" rx="2" fill="#ffffff" />
+  <text x="1402" y="538" class="font-sans flow-label-right">Public college list, match fixtures, live scorecards</text>
+
+  <!-- ======================================================== -->
+  <!-- 6. DATA FLOWS (Between Central Process & Database Store) -->
+  <!-- ======================================================== -->
+
+  <!-- Write/Persist Flow (System -> D1) -->
+  <path d="M 750 730 L 750 830" class="flow-line-db" marker-end="url(#arrow-purple)" />
+  <g transform="translate(480, 755)">
+    <rect x="0" y="0" width="255" height="42" rx="3" fill="#ffffff" stroke="#ddd6fe" stroke-width="1" />
+    <text x="10" y="15" class="font-sans" font-size="9.5" font-weight="700" fill="#6b21a8">Write / Update Transactions (SQL DML):</text>
+    <text x="10" y="27" class="font-sans" font-size="9" fill="#1e293b">• Users, tokens, roles, colleges, invitations</text>
+    <text x="10" y="38" class="font-sans" font-size="9" fill="#1e293b">• Tournaments, registrations, squads, deliveries</text>
+  </g>
+
+  <!-- Read/Retrieve Flow (D1 -> System) -->
+  <path d="M 950 830 L 950 730" class="flow-line-db" marker-end="url(#arrow-purple)" />
+  <g transform="translate(965, 755)">
+    <rect x="0" y="0" width="255" height="42" rx="3" fill="#ffffff" stroke="#ddd6fe" stroke-width="1" />
+    <text x="10" y="15" class="font-sans" font-size="9.5" font-weight="700" fill="#6b21a8">Read / Query ResultSets (SQL SELECT):</text>
+    <text x="10" y="27" class="font-sans" font-size="9" fill="#1e293b">• Principals, scopes, squads, line-ups</text>
+    <text x="10" y="38" class="font-sans" font-size="9" fill="#1e293b">• Delivery events for dynamic scorecard engine</text>
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- CAPTION                                                  -->
+  <!-- ======================================================== -->
+  <g transform="translate(850, 1145)">
+    <text x="0" y="0" class="font-sans caption-main">Figure 4.4: Data Flow Diagram (Level 0) of CricArena</text>
+    <text x="0" y="18" class="font-sans caption-sub">Context-level data flow diagram representing inputs and outputs between external entities (Platform Admin, College Admin, Team Captain, Student, Public), central process, and MySQL database.</text>
+  </g>
+</svg>

@@ -51,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String email = jwtTokenProvider.getEmailFromToken(token);
                 String tokenRole = jwtTokenProvider.getRoleFromToken(token);
 
-                if (userId != null && StringUtils.hasText(email) && StringUtils.hasText(tokenRole)
+                if (userId != null && StringUtils.hasText(email)
                         && SecurityContextHolder.getContext().getAuthentication() == null) {
 
                     Optional<User> userOpt = userRepository.findById(userId);
@@ -63,26 +63,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             Optional<UserRoleAssignment> roleAssignmentOpt =
                                     userRoleAssignmentRepository.findByUser_IdAndActiveTrue(userId);
 
+                            SimpleGrantedAuthority authority = null;
+
                             if (roleAssignmentOpt.isPresent()) {
                                 UserRoleAssignment roleAssignment = roleAssignmentOpt.get();
 
                                 if (roleAssignment.isActive() &&
                                         roleAssignment.getRole() != null &&
                                         roleAssignment.getRole().name().equals(tokenRole)) {
-
-                                    SimpleGrantedAuthority authority =
-                                            new SimpleGrantedAuthority("ROLE_" + tokenRole);
-
-                                    UsernamePasswordAuthenticationToken authentication =
-                                            new UsernamePasswordAuthenticationToken(
-                                                    user.getEmail(),
-                                                    null,
-                                                    List.of(authority)
-                                            );
-                                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                                    authority = new SimpleGrantedAuthority("ROLE_" + roleAssignment.getRole().name());
                                 }
+                            } else if (!StringUtils.hasText(tokenRole)) {
+                                authority = new SimpleGrantedAuthority("ROLE_USER");
+                            }
+
+                            if (authority != null) {
+                                UsernamePasswordAuthenticationToken authentication =
+                                        new UsernamePasswordAuthenticationToken(
+                                                user.getEmail(),
+                                                null,
+                                                List.of(authority)
+                                        );
+                                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                                SecurityContextHolder.getContext().setAuthentication(authentication);
                             }
                         }
                     }

@@ -14,6 +14,8 @@ public class TeamResponse {
     private Long collegeId;
     private String collegeName;
     private String collegeCode;
+    private Long captainUserId;
+    private String captainName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -116,6 +118,22 @@ public class TeamResponse {
 
     public void setCollegeCode(String collegeCode) {
         this.collegeCode = collegeCode;
+    }
+
+    public Long getCaptainUserId() {
+        return captainUserId;
+    }
+
+    public void setCaptainUserId(Long captainUserId) {
+        this.captainUserId = captainUserId;
+    }
+
+    public String getCaptainName() {
+        return captainName;
+    }
+
+    public void setCaptainName(String captainName) {
+        this.captainName = captainName;
     }
 
     public LocalDateTime getCreatedAt() {

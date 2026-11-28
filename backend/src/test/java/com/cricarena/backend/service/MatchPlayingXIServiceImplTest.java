@@ -58,6 +58,9 @@ class MatchPlayingXIServiceImplTest {
     @Mock
     private MatchPlayingXIRepository matchPlayingXIRepository;
 
+    @Mock
+    private com.cricarena.backend.repository.TournamentSquadRepository tournamentSquadRepository;
+
     @Spy
     private MatchPlayingXIMapper matchPlayingXIMapper = new MatchPlayingXIMapper();
 

@@ -44,6 +44,16 @@ public class Tournament {
     @Column(name = "status", nullable = false, length = 50)
     private TournamentStatus status = TournamentStatus.DRAFT;
 
+    @jakarta.persistence.ManyToOne(fetch = jakarta.persistence.FetchType.LAZY)
+    @jakarta.persistence.JoinColumn(name = "college_id")
+    private College college;
+
+    @Column(name = "registration_opens_at")
+    private LocalDateTime registrationOpensAt;
+
+    @Column(name = "registration_deadline")
+    private LocalDateTime registrationDeadline;
+
     @Column(name = "scheduled_publish_at")
     private LocalDateTime scheduledPublishAt;
 
@@ -161,6 +171,30 @@ public class Tournament {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public College getCollege() {
+        return college;
+    }
+
+    public void setCollege(College college) {
+        this.college = college;
+    }
+
+    public LocalDateTime getRegistrationOpensAt() {
+        return registrationOpensAt;
+    }
+
+    public void setRegistrationOpensAt(LocalDateTime registrationOpensAt) {
+        this.registrationOpensAt = registrationOpensAt;
+    }
+
+    public LocalDateTime getRegistrationDeadline() {
+        return registrationDeadline;
+    }
+
+    public void setRegistrationDeadline(LocalDateTime registrationDeadline) {
+        this.registrationDeadline = registrationDeadline;
     }
 
     public LocalDateTime getUpdatedAt() {

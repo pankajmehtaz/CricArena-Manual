@@ -6,6 +6,8 @@ import com.cricarena.backend.service.PlayerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +30,8 @@ public class PlayerController {
     }
 
     @PostMapping
-    public ResponseEntity<PlayerResponse> createPlayer(@Valid @RequestBody PlayerRequest request) {
+    @PreAuthorize("@tenantSecurityService.canAddPlayerToTeam(#request.teamId)")
+    public ResponseEntity<PlayerResponse> createPlayer(@Valid @RequestBody @P("request") PlayerRequest request) {
         PlayerResponse response = playerService.createPlayer(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -64,15 +67,17 @@ public class PlayerController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("@tenantSecurityService.canManagePlayer(#id)")
     public ResponseEntity<PlayerResponse> updatePlayer(
-            @PathVariable Long id,
+            @PathVariable @P("id") Long id,
             @Valid @RequestBody PlayerRequest request) {
         PlayerResponse response = playerService.updatePlayer(id, request);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deactivatePlayer(@PathVariable Long id) {
+    @PreAuthorize("@tenantSecurityService.canManagePlayer(#id)")
+    public ResponseEntity<Void> deactivatePlayer(@PathVariable @P("id") Long id) {
         playerService.deactivatePlayer(id);
         return ResponseEntity.noContent().build();
     }

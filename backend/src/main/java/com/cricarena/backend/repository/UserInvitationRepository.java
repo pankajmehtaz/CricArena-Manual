@@ -16,4 +16,8 @@ public interface UserInvitationRepository extends JpaRepository<UserInvitation, 
     List<UserInvitation> findAllByEmailAndStatus(String email, InvitationStatus status);
 
     boolean existsByEmailAndStatus(String email, InvitationStatus status);
+
+    boolean existsByEmailAndCollege_IdAndStatus(String email, Long collegeId, InvitationStatus status);
+
+    List<UserInvitation> findAllByOrderByCreatedAtDesc();
 }

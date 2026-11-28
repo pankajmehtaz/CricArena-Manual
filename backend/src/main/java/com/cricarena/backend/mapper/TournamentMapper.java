@@ -34,6 +34,23 @@ public class TournamentMapper {
         response.setStatus(tournament.getStatus());
         response.setScheduledPublishAt(tournament.getScheduledPublishAt());
         response.setPublishedAt(tournament.getPublishedAt());
+        if (tournament.getCollege() != null) {
+            response.setCollegeId(tournament.getCollege().getId());
+            response.setCollegeName(tournament.getCollege().getName());
+        }
+        response.setRegistrationOpensAt(tournament.getRegistrationOpensAt());
+        response.setRegistrationDeadline(tournament.getRegistrationDeadline());
+
+        boolean isOpen = tournament.getStatus() == com.cricarena.backend.entity.enums.TournamentStatus.PUBLISHED;
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        if (isOpen && tournament.getRegistrationOpensAt() != null && now.isBefore(tournament.getRegistrationOpensAt())) {
+            isOpen = false;
+        }
+        if (isOpen && tournament.getRegistrationDeadline() != null && now.isAfter(tournament.getRegistrationDeadline())) {
+            isOpen = false;
+        }
+        response.setRegistrationOpen(isOpen);
+
         response.setCreatedAt(tournament.getCreatedAt());
         response.setUpdatedAt(tournament.getUpdatedAt());
 

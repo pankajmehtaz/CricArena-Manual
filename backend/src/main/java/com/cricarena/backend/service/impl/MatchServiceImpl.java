@@ -104,6 +104,10 @@ public class MatchServiceImpl implements MatchService {
         Match match = matchRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Match not found with id: " + id));
 
+        if (match.getStatus() == MatchStatus.COMPLETED || match.getStatus() == MatchStatus.ABANDONED) {
+            throw new IllegalStateException("Completed or abandoned matches are locked and cannot be edited");
+        }
+
         boolean tournamentChanged = !match.getTournament().getId().equals(request.getTournamentId());
         boolean teamAChanged = !match.getTeamA().getId().equals(request.getTeamAId());
         boolean teamBChanged = !match.getTeamB().getId().equals(request.getTeamBId());

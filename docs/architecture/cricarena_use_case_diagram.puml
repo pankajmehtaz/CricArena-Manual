@@ -1,0 +1,102 @@
+@startuml
+title Figure 4.3: Use Case Diagram of CricArena
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam backgroundColor #FFFFFF
+skinparam handwritten false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+
+actor "Platform Administrator\n[ROLE: PLATFORM_ADMIN]" as PlatformAdmin
+actor "College Administrator\n[ROLE: COLLEGE_ADMIN]" as CollegeAdmin
+actor "Team Captain\n[ROLE: TEAM_CAPTAIN]" as TeamCaptain
+actor "Registered Student / Normal User\n[MEMBER]" as StudentUser
+actor "Public Visitor\n(Unauthenticated Guest)" as Guest
+
+rectangle "CricArena – College Cricket Tournament Management and Live Scoring System" {
+    ' Core Shared Authentication
+    usecase "Login / Authenticate\n(JWT Bearer Token)" as UC_Login #F0F9FF
+
+    ' Platform Admin Use Cases
+    usecase "Manage Colleges" as UC_ManageColleges
+    usecase "View Platform-Wide Tournaments" as UC_ViewPlatformTournaments
+    usecase "Create College Administrator Invitation" as UC_CreateInvitation
+    usecase "View Invitations" as UC_ViewInvitations
+    usecase "Revoke or Resend Invitations" as UC_RevokeResendInvitations
+
+    ' College Admin Use Cases
+    usecase "Manage College Tournaments" as UC_ManageCollegeTournaments
+    usecase "Publish Tournament" as UC_PublishTournament
+    usecase "View Registered Teams" as UC_ViewRegisteredTeams
+    usecase "Register Teams for Tournaments" as UC_RegisterTeamsCollegeAdmin
+    usecase "Schedule Matches" as UC_ScheduleMatches
+    usecase "Review Captain Applications" as UC_ReviewCaptainApps
+    usecase "Approve or Reject Captain Applications" as UC_ApproveRejectCaptain
+    usecase "Transfer Team Captaincy" as UC_TransferCaptaincy
+
+    ' Team Captain Use Cases
+    usecase "Manage Team" as UC_ManageTeam
+    usecase "Manage Player Roster" as UC_ManagePlayerRoster
+    usecase "Register Team for Tournament" as UC_RegisterTeamCaptain
+    usecase "Manage Tournament Squad\n(Max 15 Players)" as UC_ManageTournamentSquad
+    usecase "Select Match Playing XI\n(Exactly 11 Players)" as UC_SelectPlayingXI
+
+    ' Registered Student / Normal User Use Cases
+    usecase "Register Account" as UC_RegisterAccount
+    usecase "Select or Switch College" as UC_SelectSwitchCollege
+    usecase "Browse Tournaments" as UC_BrowseTournamentsStudent
+    usecase "Apply for Team Captaincy" as UC_ApplyCaptaincy
+    usecase "View Application History" as UC_ViewAppHistory
+
+    ' Public Visitor Use Cases
+    usecase "Browse Active Colleges" as UC_BrowseColleges
+    usecase "View Tournaments" as UC_ViewPublicTournaments
+    usecase "View Matches" as UC_ViewMatches
+    usecase "Access Available Public Scorecard Information" as UC_AccessScorecards
+}
+
+' Include and Extend Relationships
+UC_RevokeResendInvitations .> UC_ViewInvitations : <<extend>>
+UC_PublishTournament .> UC_ManageCollegeTournaments : <<extend>>
+UC_ApproveRejectCaptain .> UC_ReviewCaptainApps : <<extend>>
+UC_SelectPlayingXI .> UC_ManageTournamentSquad : <<include>>
+
+' Platform Admin Associations
+PlatformAdmin --> UC_Login
+PlatformAdmin --> UC_ManageColleges
+PlatformAdmin --> UC_ViewPlatformTournaments
+PlatformAdmin --> UC_CreateInvitation
+PlatformAdmin --> UC_ViewInvitations
+
+' College Admin Associations
+CollegeAdmin --> UC_Login
+CollegeAdmin --> UC_ManageCollegeTournaments
+CollegeAdmin --> UC_ViewRegisteredTeams
+CollegeAdmin --> UC_RegisterTeamsCollegeAdmin
+CollegeAdmin --> UC_ScheduleMatches
+CollegeAdmin --> UC_ReviewCaptainApps
+CollegeAdmin --> UC_TransferCaptaincy
+
+' Team Captain Associations
+TeamCaptain --> UC_Login
+TeamCaptain --> UC_ManageTeam
+TeamCaptain --> UC_ManagePlayerRoster
+TeamCaptain --> UC_RegisterTeamCaptain
+TeamCaptain --> UC_ManageTournamentSquad
+
+' Registered Student Associations
+StudentUser --> UC_RegisterAccount
+StudentUser --> UC_Login
+StudentUser --> UC_SelectSwitchCollege
+StudentUser --> UC_BrowseTournamentsStudent
+StudentUser --> UC_ApplyCaptaincy
+StudentUser --> UC_ViewAppHistory
+
+' Public Visitor Associations
+Guest --> UC_BrowseColleges
+Guest --> UC_ViewPublicTournaments
+Guest --> UC_ViewMatches
+Guest --> UC_AccessScorecards
+
+@enduml

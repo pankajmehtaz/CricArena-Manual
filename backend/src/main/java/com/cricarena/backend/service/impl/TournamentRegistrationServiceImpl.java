@@ -45,8 +45,22 @@ public class TournamentRegistrationServiceImpl implements TournamentRegistration
             throw new IllegalStateException("Tournament is not eligible for team registration: status is " + tournament.getStatus());
         }
 
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        if (tournament.getRegistrationOpensAt() != null && now.isBefore(tournament.getRegistrationOpensAt())) {
+            throw new IllegalStateException("Registration is not yet open for tournament: " + tournament.getName());
+        }
+        if (tournament.getRegistrationDeadline() != null && now.isAfter(tournament.getRegistrationDeadline())) {
+            throw new IllegalStateException("Registration deadline has passed for tournament: " + tournament.getName());
+        }
+
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new ResourceNotFoundException("Team not found with id: " + teamId));
+
+        if (tournament.getCollege() != null && team.getCollege() != null) {
+            if (!tournament.getCollege().getId().equals(team.getCollege().getId())) {
+                throw new IllegalStateException("Team does not belong to the college hosting this tournament.");
+            }
+        }
 
         if (!team.isActive()) {
             throw new IllegalStateException("Team is not active and cannot be registered: " + team.getName());

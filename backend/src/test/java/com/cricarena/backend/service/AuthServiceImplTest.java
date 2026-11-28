@@ -1,14 +1,19 @@
 package com.cricarena.backend.service;
 
 import com.cricarena.backend.dto.request.LoginRequest;
+import com.cricarena.backend.dto.request.RefreshTokenRequest;
+import com.cricarena.backend.dto.request.RegisterRequest;
 import com.cricarena.backend.dto.response.AuthResponse;
 import com.cricarena.backend.dto.response.UserResponse;
 import com.cricarena.backend.dto.response.UserRoleAssignmentResponse;
+import com.cricarena.backend.entity.RefreshToken;
 import com.cricarena.backend.entity.User;
 import com.cricarena.backend.entity.UserRoleAssignment;
 import com.cricarena.backend.entity.enums.UserRole;
+import com.cricarena.backend.exception.DuplicateResourceException;
 import com.cricarena.backend.mapper.UserMapper;
 import com.cricarena.backend.mapper.UserRoleAssignmentMapper;
+import com.cricarena.backend.repository.RefreshTokenRepository;
 import com.cricarena.backend.repository.UserRepository;
 import com.cricarena.backend.repository.UserRoleAssignmentRepository;
 import com.cricarena.backend.security.JwtTokenProvider;
@@ -17,17 +22,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.time.LocalDateTime;
+import java.util.HexFormat;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -42,6 +53,9 @@ class AuthServiceImplTest {
 
     @Mock
     private UserRoleAssignmentRepository userRoleAssignmentRepository;
+
+    @Mock
+    private RefreshTokenRepository refreshTokenRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -62,6 +76,7 @@ class AuthServiceImplTest {
         authService = new AuthServiceImpl(
                 userRepository,
                 userRoleAssignmentRepository,
+                refreshTokenRepository,
                 passwordEncoder,
                 jwtTokenProvider,
                 userMapper,
@@ -69,10 +84,19 @@ class AuthServiceImplTest {
         );
     }
 
+    private String hashToken(String rawToken) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(rawToken.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hash);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Test
     @DisplayName("Should login successfully with valid credentials and normalized email")
     void login_withValidCredentials_returnsAuthResponse() {
-        // Arrange
         String rawEmail = "  Admin@CricArena.COM  ";
         String normalizedEmail = "admin@cricarena.com";
         String password = "CorrectPassword123";
@@ -92,19 +116,17 @@ class AuthServiceImplTest {
         when(userRepository.findByEmail(normalizedEmail)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(password, passwordHash)).thenReturn(true);
         when(userRoleAssignmentRepository.findByUser_IdAndActiveTrue(1L)).thenReturn(Optional.of(roleAssignment));
-        when(jwtTokenProvider.generateToken(1L, normalizedEmail, UserRole.PLATFORM_ADMIN)).thenReturn("mock.jwt.token");
+        when(jwtTokenProvider.generateToken(1L, normalizedEmail, "PLATFORM_ADMIN")).thenReturn("mock.jwt.token");
         when(jwtTokenProvider.getAccessTokenExpirationMs()).thenReturn(900000L);
         when(userMapper.toResponse(user)).thenReturn(userResponse);
         when(userRoleAssignmentMapper.toResponse(roleAssignment)).thenReturn(roleResponse);
 
-        // Act
         LoginRequest request = new LoginRequest(rawEmail, password);
         AuthResponse response = authService.login(request);
 
-        // Assert
         assertNotNull(response);
         assertEquals("mock.jwt.token", response.getAccessToken());
-        assertNull(response.getRefreshToken());
+        assertNotNull(response.getRefreshToken());
         assertEquals("Bearer", response.getTokenType());
         assertEquals(900000L, response.getExpiresIn());
         assertNotNull(response.getUser());
@@ -116,6 +138,38 @@ class AuthServiceImplTest {
         verify(userRepository).findByEmail(normalizedEmail);
         verify(passwordEncoder).matches(password, passwordHash);
         verify(userRoleAssignmentRepository).findByUser_IdAndActiveTrue(1L);
+        verify(refreshTokenRepository).save(any(RefreshToken.class));
+    }
+
+    @Test
+    @DisplayName("Should login role-less normal user successfully with roleAssignment null")
+    void login_withRolelessUser_returnsAuthResponseWithNullRoleAssignment() {
+        String email = "student@cricarena.com";
+        String password = "Password123";
+        String passwordHash = "$2a$10$hashedPasswordValue";
+
+        User user = new User("Normal Student", email, passwordHash, true);
+        user.setId(5L);
+
+        UserResponse userResponse = new UserResponse(5L, "Normal Student", email, true, null, null);
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(password, passwordHash)).thenReturn(true);
+        when(userRoleAssignmentRepository.findByUser_IdAndActiveTrue(5L)).thenReturn(Optional.empty());
+        when(jwtTokenProvider.generateToken(5L, email, (String) null)).thenReturn("mock.jwt.token.roleless");
+        when(jwtTokenProvider.getAccessTokenExpirationMs()).thenReturn(900000L);
+        when(userMapper.toResponse(user)).thenReturn(userResponse);
+
+        LoginRequest request = new LoginRequest(email, password);
+        AuthResponse response = authService.login(request);
+
+        assertNotNull(response);
+        assertEquals("mock.jwt.token.roleless", response.getAccessToken());
+        assertNotNull(response.getRefreshToken());
+        assertNull(response.getRoleAssignment());
+        assertEquals(email, response.getUser().getEmail());
+
+        verify(refreshTokenRepository).save(any(RefreshToken.class));
     }
 
     @Test
@@ -174,23 +228,108 @@ class AuthServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should reject user without active role with BadCredentialsException")
-    void login_withUserWithoutActiveRole_throwsBadCredentialsException() {
-        User user = new User("Roleless User", "norole@cricarena.com", "hash", true);
-        user.setId(4L);
+    @DisplayName("Should register normal user successfully and return AuthResponse")
+    void register_withValidRequest_returnsAuthResponse() {
+        RegisterRequest request = new RegisterRequest("New Student", "Student@CricArena.COM", "SecurePass123");
+        String normalizedEmail = "student@cricarena.com";
 
-        when(userRepository.findByEmail("norole@cricarena.com")).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("password", "hash")).thenReturn(true);
-        when(userRoleAssignmentRepository.findByUser_IdAndActiveTrue(4L)).thenReturn(Optional.empty());
+        when(userRepository.existsByEmail(normalizedEmail)).thenReturn(false);
+        when(passwordEncoder.encode("SecurePass123")).thenReturn("$2a$10$encodedHash");
 
-        LoginRequest request = new LoginRequest("norole@cricarena.com", "password");
+        User savedUser = new User("New Student", normalizedEmail, "$2a$10$encodedHash", true);
+        savedUser.setId(15L);
 
-        BadCredentialsException exception = assertThrows(
-                BadCredentialsException.class,
-                () -> authService.login(request)
-        );
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
+        when(jwtTokenProvider.generateToken(15L, normalizedEmail, (String) null)).thenReturn("registered.jwt.token");
+        when(jwtTokenProvider.getAccessTokenExpirationMs()).thenReturn(900000L);
 
-        assertEquals("User has no active role assignment", exception.getMessage());
-        verify(jwtTokenProvider, never()).generateToken(any(), any(), any(UserRole.class));
+        UserResponse userResponse = new UserResponse(15L, "New Student", normalizedEmail, true, null, null);
+        when(userMapper.toResponse(savedUser)).thenReturn(userResponse);
+
+        AuthResponse response = authService.register(request);
+
+        assertNotNull(response);
+        assertEquals("registered.jwt.token", response.getAccessToken());
+        assertNotNull(response.getRefreshToken());
+        assertNull(response.getRoleAssignment());
+        assertEquals("New Student", response.getUser().getFullName());
+        assertEquals(normalizedEmail, response.getUser().getEmail());
+
+        verify(userRepository).save(any(User.class));
+        verify(refreshTokenRepository).save(any(RefreshToken.class));
+    }
+
+    @Test
+    @DisplayName("Should reject duplicate registration email with DuplicateResourceException")
+    void register_withDuplicateEmail_throwsDuplicateResourceException() {
+        RegisterRequest request = new RegisterRequest("Existing", "already@exists.com", "Password123");
+        when(userRepository.existsByEmail("already@exists.com")).thenReturn(true);
+
+        assertThrows(DuplicateResourceException.class, () -> authService.register(request));
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should refresh token with token rotation")
+    void refreshToken_withValidToken_rotatesTokenAndReturnsNewAuth() {
+        String rawToken = "my-valid-refresh-token";
+        String tokenHash = hashToken(rawToken);
+
+        User user = new User("User One", "user@cricarena.com", "hash", true);
+        user.setId(7L);
+
+        RefreshToken tokenEntity = new RefreshToken(user, tokenHash, LocalDateTime.now().plusDays(5), false);
+        tokenEntity.setId(100L);
+
+        when(refreshTokenRepository.findByTokenHash(tokenHash)).thenReturn(Optional.of(tokenEntity));
+        when(userRoleAssignmentRepository.findByUser_IdAndActiveTrue(7L)).thenReturn(Optional.empty());
+        when(jwtTokenProvider.generateToken(7L, "user@cricarena.com", (String) null)).thenReturn("rotated.jwt.token");
+        when(jwtTokenProvider.getAccessTokenExpirationMs()).thenReturn(900000L);
+
+        UserResponse userResponse = new UserResponse(7L, "User One", "user@cricarena.com", true, null, null);
+        when(userMapper.toResponse(user)).thenReturn(userResponse);
+
+        RefreshTokenRequest request = new RefreshTokenRequest(rawToken);
+        AuthResponse response = authService.refreshToken(request);
+
+        assertNotNull(response);
+        assertEquals("rotated.jwt.token", response.getAccessToken());
+        assertTrue(tokenEntity.isRevoked());
+        assertNotNull(tokenEntity.getRevokedAt());
+
+        verify(refreshTokenRepository, org.mockito.Mockito.times(2)).save(any(RefreshToken.class));
+    }
+
+    @Test
+    @DisplayName("Should reject revoked refresh token with BadCredentialsException")
+    void refreshToken_withRevokedToken_throwsBadCredentialsException() {
+        String rawToken = "revoked-token";
+        String tokenHash = hashToken(rawToken);
+
+        User user = new User("User", "user@cricarena.com", "hash", true);
+        RefreshToken tokenEntity = new RefreshToken(user, tokenHash, LocalDateTime.now().plusDays(5), true);
+
+        when(refreshTokenRepository.findByTokenHash(tokenHash)).thenReturn(Optional.of(tokenEntity));
+
+        RefreshTokenRequest request = new RefreshTokenRequest(rawToken);
+        assertThrows(BadCredentialsException.class, () -> authService.refreshToken(request));
+    }
+
+    @Test
+    @DisplayName("Should revoke refresh token on logout")
+    void logout_withValidToken_marksRevoked() {
+        String rawToken = "active-token";
+        String tokenHash = hashToken(rawToken);
+
+        User user = new User("User", "user@cricarena.com", "hash", true);
+        RefreshToken tokenEntity = new RefreshToken(user, tokenHash, LocalDateTime.now().plusDays(5), false);
+
+        when(refreshTokenRepository.findByTokenHash(tokenHash)).thenReturn(Optional.of(tokenEntity));
+
+        authService.logout(new RefreshTokenRequest(rawToken));
+
+        assertTrue(tokenEntity.isRevoked());
+        assertNotNull(tokenEntity.getRevokedAt());
+        verify(refreshTokenRepository).save(tokenEntity);
     }
 }

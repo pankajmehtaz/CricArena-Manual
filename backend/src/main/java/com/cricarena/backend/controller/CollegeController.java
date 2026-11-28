@@ -6,6 +6,7 @@ import com.cricarena.backend.service.CollegeService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ public class CollegeController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
     public ResponseEntity<CollegeResponse> createCollege(@Valid @RequestBody CollegeRequest request) {
         CollegeResponse response = collegeService.createCollege(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -52,6 +54,7 @@ public class CollegeController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
     public ResponseEntity<CollegeResponse> updateCollege(
             @PathVariable Long id,
             @Valid @RequestBody CollegeRequest request) {
@@ -60,6 +63,7 @@ public class CollegeController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
     public ResponseEntity<Void> deactivateCollege(@PathVariable Long id) {
         collegeService.deactivateCollege(id);
         return ResponseEntity.noContent().build();

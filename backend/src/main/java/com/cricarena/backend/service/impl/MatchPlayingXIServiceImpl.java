@@ -10,9 +10,11 @@ import com.cricarena.backend.entity.Team;
 import com.cricarena.backend.entity.enums.MatchStatus;
 import com.cricarena.backend.exception.ResourceNotFoundException;
 import com.cricarena.backend.mapper.MatchPlayingXIMapper;
+import com.cricarena.backend.entity.TournamentSquad;
 import com.cricarena.backend.repository.MatchPlayingXIRepository;
 import com.cricarena.backend.repository.MatchRepository;
 import com.cricarena.backend.repository.PlayerRepository;
+import com.cricarena.backend.repository.TournamentSquadRepository;
 import com.cricarena.backend.service.MatchPlayingXIService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -30,15 +33,18 @@ public class MatchPlayingXIServiceImpl implements MatchPlayingXIService {
     private final MatchRepository matchRepository;
     private final PlayerRepository playerRepository;
     private final MatchPlayingXIRepository matchPlayingXIRepository;
+    private final TournamentSquadRepository tournamentSquadRepository;
     private final MatchPlayingXIMapper matchPlayingXIMapper;
 
     public MatchPlayingXIServiceImpl(MatchRepository matchRepository,
                                      PlayerRepository playerRepository,
                                      MatchPlayingXIRepository matchPlayingXIRepository,
+                                     TournamentSquadRepository tournamentSquadRepository,
                                      MatchPlayingXIMapper matchPlayingXIMapper) {
         this.matchRepository = matchRepository;
         this.playerRepository = playerRepository;
         this.matchPlayingXIRepository = matchPlayingXIRepository;
+        this.tournamentSquadRepository = tournamentSquadRepository;
         this.matchPlayingXIMapper = matchPlayingXIMapper;
     }
 
@@ -88,10 +94,20 @@ public class MatchPlayingXIServiceImpl implements MatchPlayingXIService {
             opponentPlayerIds.add(mpxi.getPlayer().getId());
         }
 
+        // Validate against registered tournament squad if present
+        List<TournamentSquad> teamSquad = tournamentSquadRepository.findAllByTournament_IdAndTournamentRegistration_Team_Id(
+                match.getTournament().getId(), selectedTeam.getId());
+        Set<Long> squadPlayerIds = teamSquad.isEmpty() ? null :
+                teamSquad.stream().map(s -> s.getPlayer().getId()).collect(Collectors.toSet());
+
         List<Player> players = new ArrayList<>();
         for (Long pId : playerIds) {
             if (opponentPlayerIds.contains(pId)) {
                 throw new IllegalArgumentException("Player with id " + pId + " is already selected in the opponent team's Playing XI");
+            }
+
+            if (squadPlayerIds != null && !squadPlayerIds.contains(pId)) {
+                throw new IllegalStateException("Player with id " + pId + " is not enrolled in the registered tournament squad for team " + selectedTeam.getName());
             }
 
             Player player = playerRepository.findById(pId)

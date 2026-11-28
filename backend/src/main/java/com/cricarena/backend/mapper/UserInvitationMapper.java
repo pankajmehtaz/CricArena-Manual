@@ -24,6 +24,7 @@ public class UserInvitationMapper {
 
         if (invitation.getCollege() != null) {
             response.setCollegeId(invitation.getCollege().getId());
+            response.setCollegeName(invitation.getCollege().getName());
         }
 
         if (invitation.getTeam() != null) {

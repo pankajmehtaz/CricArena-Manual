@@ -750,6 +750,39 @@ class ScorecardServiceImplTest {
         return sc.getBowlers().stream().filter(b -> playerId.equals(b.getPlayerId())).findFirst().orElse(null);
     }
 
+    @Test
+    @DisplayName("Scorecard snapshot: resolves player names from MatchPlayingXI snapshot rather than current live Player entity")
+    void getScorecard_usesMatchPlayingXISnapshot_preservesHistoricalNames() {
+        when(matchRepository.findById(10L)).thenReturn(Optional.of(match));
+        when(matchInningsRepository.findAllByMatch_IdOrderByInningsNumberAsc(10L)).thenReturn(List.of(innings1));
+
+        // Delivery played by batter1 (current live name: "Batter One") and bowled by bowler1 ("Bowler One")
+        MatchDelivery d = makeDelivery(innings1, 1, 0, 1, bowler1, batter1, batter2, 4, ExtraType.NONE, 0, 4, true);
+        when(matchDeliveryRepository.findAllByInnings_IdOrderByBallSequenceAsc(1L)).thenReturn(List.of(d));
+
+        // In MatchPlayingXI, snapshot names were "Historical Legend Batter" and "Historical Master Bowler"
+        MatchPlayingXI xiBatter = new MatchPlayingXI(match, teamA, batter1, "Historical Legend Batter", 18, PlayingRole.BATSMAN, false, false);
+        MatchPlayingXI xiBowler = new MatchPlayingXI(match, teamB, bowler1, "Historical Master Bowler", 99, PlayingRole.BOWLER, false, false);
+
+        when(matchPlayingXIRepository.findAllByMatch_Id(10L)).thenReturn(List.of(xiBatter, xiBowler));
+        when(matchPlayingXIRepository.findAllByMatch_IdAndTeam_Id(10L, 1L)).thenReturn(List.of(xiBatter));
+
+        // Change live player names to simulate future rename
+        batter1.setFullName("Modern Renamed Batter");
+        bowler1.setFullName("Modern Renamed Bowler");
+
+        ScorecardResponse sc = scorecardService.getScorecard(10L);
+
+        assertNotNull(sc.getInnings1());
+        BatterScorecardEntry batterEntry = findBatter(sc.getInnings1(), 101L);
+        assertNotNull(batterEntry);
+        assertEquals("Historical Legend Batter", batterEntry.getPlayerName(), "Batter name should be snapshot name, not modern live name");
+
+        BowlerScorecardEntry bowlerEntry = findBowler(sc.getInnings1(), 201L);
+        assertNotNull(bowlerEntry);
+        assertEquals("Historical Master Bowler", bowlerEntry.getPlayerName(), "Bowler name should be snapshot name, not modern live name");
+    }
+
     // ---- entity factories ----
 
     private Player makePlayer(Long id, String fullName) {

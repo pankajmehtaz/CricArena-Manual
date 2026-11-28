@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1750 1340" width="1750" height="1340">
+  <defs>
+    <style>
+      .font-sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+      .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      
+      /* Typography */
+      .doc-title { font-size: 19px; font-weight: 800; fill: #0f172a; letter-spacing: 0.5px; }
+      .doc-subtitle { font-size: 12px; font-weight: 500; fill: #475569; }
+      .meta-tag { font-size: 11px; font-weight: 600; fill: #0284c7; }
+      
+      .lane-title { font-size: 13.5px; font-weight: 800; fill: #0f172a; text-anchor: middle; }
+      .lane-sub { font-size: 10px; font-weight: 600; fill: #0369a1; text-anchor: middle; }
+      
+      .act-title { font-size: 11.5px; font-weight: 700; fill: #0f172a; text-anchor: middle; }
+      .act-desc { font-size: 9.5px; font-weight: 500; fill: #334155; text-anchor: middle; }
+      .act-entity { font-size: 9px; font-weight: 600; fill: #0284c7; text-anchor: middle; font-family: ui-monospace, monospace; }
+      
+      .decision-text { font-size: 11px; font-weight: 700; fill: #0f172a; text-anchor: middle; }
+      
+      .branch-label { font-size: 10.5px; font-weight: 800; fill: #0f172a; text-anchor: middle; }
+      .branch-approved { fill: #16a34a; }
+      .branch-rejected { fill: #dc2626; }
+      
+      .terminal-text { font-size: 11.5px; font-weight: 700; fill: #ffffff; text-anchor: middle; }
+      .terminal-sub { font-size: 9.5px; font-weight: 500; fill: #f8fafc; text-anchor: middle; }
+      
+      .caption-main { font-size: 15px; font-weight: 800; fill: #0f172a; text-anchor: middle; }
+      .caption-sub { font-size: 11.5px; font-weight: 500; fill: #475569; text-anchor: middle; }
+      
+      /* Shapes & Lines */
+      .lane-box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.2; }
+      .lane-box-alt { fill: #fbfcfe; stroke: #cbd5e1; stroke-width: 1.2; }
+      .lane-header { fill: #f0f9ff; stroke: #bae6fd; stroke-width: 1.2; }
+      
+      .act-box { fill: #ffffff; stroke: #0284c7; stroke-width: 1.5; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.04)); }
+      .act-box-highlight { fill: #f0fdf4; stroke: #16a34a; stroke-width: 1.5; }
+      .decision-diamond { fill: #fffbeb; stroke: #f59e0b; stroke-width: 1.8; }
+      
+      .terminal-start { fill: #0284c7; stroke: #0369a1; stroke-width: 1.5; }
+      .terminal-end-term { fill: #dc2626; stroke: #b91c1c; stroke-width: 1.5; }
+      .terminal-end-success { fill: #16a34a; stroke: #15803d; stroke-width: 1.5; }
+      
+      .flow-arrow { stroke: #0f172a; stroke-width: 1.5; fill: none; }
+      .flow-arrow-approved { stroke: #16a34a; stroke-width: 1.8; fill: none; }
+      .flow-arrow-rejected { stroke: #dc2626; stroke-width: 1.8; fill: none; }
+    </style>
+
+    <!-- Arrow Markers -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 z" fill="#0f172a" />
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 z" fill="#16a34a" />
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 z" fill="#dc2626" />
+    </marker>
+  </defs>
+
+  <!-- Document Background -->
+  <rect x="0" y="0" width="1750" height="1340" fill="#ffffff" />
+  <rect x="25" y="20" width="1700" height="1295" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" />
+
+  <!-- ======================================================== -->
+  <!-- HEADER BANNER                                            -->
+  <!-- ======================================================== -->
+  <g transform="translate(50, 32)">
+    <text x="0" y="20" class="font-sans doc-title">CRICARENA — TOURNAMENT MANAGEMENT WORKFLOW DIAGRAM</text>
+    <text x="0" y="38" class="font-sans doc-subtitle">End-to-End Governance: From Institutional Onboarding to Match Playing XI Finalization</text>
+    <rect x="1190" y="6" width="460" height="32" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+    <text x="1420" y="26" class="font-mono meta-tag" text-anchor="middle">ROLE-BASED SWIMLANE PROCESS FLOW SPECIFICATION</text>
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- 4 ROLE-BASED SWIMLANES                                   -->
+  <!-- ======================================================== -->
+
+  <!-- Lane 1: Platform Administrator (x: 50 - 440, width: 390) -->
+  <rect x="50" y="85" width="395" height="1165" class="lane-box" />
+  <rect x="50" y="85" width="395" height="42" class="lane-header" />
+  <text x="247" y="104" class="font-sans lane-title">1. Platform Administrator</text>
+  <text x="247" y="119" class="font-sans lane-sub">Global System Operator [PLATFORM_ADMIN]</text>
+
+  <!-- Lane 2: College Administrator (x: 445 - 860, width: 415) -->
+  <rect x="445" y="85" width="415" height="1165" class="lane-box-alt" />
+  <rect x="445" y="85" width="415" height="42" class="lane-header" />
+  <text x="652" y="104" class="font-sans lane-title">2. College Administrator</text>
+  <text x="652" y="119" class="font-sans lane-sub">Institutional Tenant Admin [COLLEGE_ADMIN]</text>
+
+  <!-- Lane 3: Registered Student (x: 860 - 1285, width: 425) -->
+  <rect x="860" y="85" width="425" height="1165" class="lane-box" />
+  <rect x="860" y="85" width="425" height="42" class="lane-header" />
+  <text x="1072" y="104" class="font-sans lane-title">3. Registered Student</text>
+  <text x="1072" y="119" class="font-sans lane-sub">Authenticated Member [MEMBER]</text>
+
+  <!-- Lane 4: Team Captain (x: 1285 - 1700, width: 415) -->
+  <rect x="1285" y="85" width="415" height="1165" class="lane-box-alt" />
+  <rect x="1285" y="85" width="415" height="42" class="lane-header" />
+  <text x="1492" y="104" class="font-sans lane-title">4. Team Captain</text>
+  <text x="1492" y="119" class="font-sans lane-sub">Tournament Squad Leader [TEAM_CAPTAIN]</text>
+
+
+  <!-- ======================================================== -->
+  <!-- WORKFLOW STEPS & CONNECTING ARROWS                       -->
+  <!-- ======================================================== -->
+
+  <!-- STEP 1: Platform Admin Onboarding Flow -->
+  <!-- 1.1 Start Terminal -->
+  <g transform="translate(247, 155)">
+    <rect x="-65" y="-15" width="130" height="30" rx="15" class="terminal-start" />
+    <text x="0" y="4" class="font-sans terminal-text">START</text>
+  </g>
+
+  <!-- Arrow: Start -> Create College -->
+  <line x1="247" y1="170" x2="247" y2="198" class="flow-arrow" marker-end="url(#arrow)" />
+
+  <!-- 1.2 Activity: Create College -->
+  <g transform="translate(247, 225)">
+    <rect x="-140" y="-27" width="280" height="54" rx="5" class="act-box" />
+    <text x="0" y="-8" class="font-sans act-title">Create College</text>
+    <text x="0" y="7" class="font-sans act-desc">Register institutional tenant &amp; assign unique code</text>
+    <text x="0" y="19" class="font-sans act-entity">Entity: colleges (name, code, city, state)</text>
+  </g>
+
+  <!-- Arrow: Create College -> Send Invitation -->
+  <line x1="247" y1="252" x2="247" y2="280" class="flow-arrow" marker-end="url(#arrow)" />
+
+  <!-- 1.3 Activity: Send Invitation -->
+  <g transform="translate(247, 307)">
+    <rect x="-140" y="-27" width="280" height="54" rx="5" class="act-box" />
+    <text x="0" y="-8" class="font-sans act-title">Send College Admin Invitation</text>
+    <text x="0" y="7" class="font-sans act-desc">Generate secure token &amp; dispatch onboarding link</text>
+    <text x="0" y="19" class="font-sans act-entity">Entity: user_invitations (token_hash, status: PENDING)</text>
+  </g>
+
+  <!-- Arrow: Lane 1 (Send Invitation) -> Lane 2 (Accept Invitation) -->
+  <path d="M 247 334 L 247 355 L 652 355 L 652 373" class="flow-arrow" marker-end="url(#arrow)" />
+
+
+  <!-- STEP 2: College Admin Setup & Tournament Publication -->
+  <!-- 2.1 Activity: Accept Invitation & Activate -->
+  <g transform="translate(652, 400)">
+    <rect x="-150" y="-27" width="300" height="54" rx="5" class="act-box" />
+    <text x="0" y="-8" class="font-sans act-title">Accept Invitation &amp; Activate Account</text>
+    <text x="0" y="7" class="font-sans act-desc">Validate token hash, set password &amp; bind college scope</text>
+    <text x="0" y="19" class="font-sans act-entity">Role Assignment: COLLEGE_ADMIN (college_id)</text>
+  </g>
+
+  <!-- Arrow: Accept -> Create Tournament -->
+  <line x1="652" y1="427" x2="652" y2="455" class="flow-arrow" marker-end="url(#arrow)" />
+
+  <!-- 2.2 Activity: Create Tournament -->
+  <g transform="translate(652, 482)">
+    <rect x="-150" y="-27" width="300" height="54" rx="5" class="act-box" />
+    <text x="0" y="-8" class="font-sans act-title">Create Tournament</text>
+    <text x="0" y="7" class="font-sans act-desc">Define competition format, schedule dates &amp; overs</text>
+    <text x="0" y="19" class="font-sans act-entity">Entity: tournaments (status: DRAFT, INTRA/INTER)</text>
+  </g>
+
+  <!-- Arrow: Create Tournament -> Publish Tournament -->
+  <line x1="652" y1="509" x2="652" y2="537" class="flow-arrow" marker-end="url(#arrow)" />
+
+  <!-- 2.3 Activity: Publish Tournament -->
+  <g transform="translate(652, 564)">
+    <rect x="-150" y="-27" width="300" height="54" rx="5" class="act-box" />
+    <text x="0" y="-8" class="font-sans act-title">Configure &amp; Publish Tournament</text>
+    <text x="0" y="7" class="font-sans act-desc">Finalize tournament rules &amp; open registration window</text>
+    <text x="0" y="19" class="font-sans act-entity">Status Transition: DRAFT -> PUBLISHED</text>
+  </g>
+
+  <!-- Arrow: Lane 2 (Publish) -> Lane 3 (Browse Tournaments) -->
+  <path d="M 652 591 L 652 612 L 1072 612 L 1072 630" class="flow-arrow" marker-end="url(#arrow)" />
+
+
+  <!-- STEP 3: Student Browsing & Captaincy Application -->
+  <!-- 3.1 Activity: Browse Tournaments -->
+  <g transform="translate(1072, 657)">
+    <rect x="-150" y="-27" width="300" height="54" rx="5" class="act-box" />
+    <text x="0" y="-8" class="font-sans act-title">Browse Available Tournaments</text>
+    <text x="0" y="7" class="font-sans act-desc">View published tournament dates, formats &amp; rules</text>
+    <text x="0" y="19" class="font-sans act-entity">Endpoint: GET /api/v1/tournaments?collegeId={id}</text>
+  </g>
+
+  <!-- Arrow: Browse -> Submit Application -->
+  <line x1="1072" y1="684" x2="1072" y2="712" class="flow-arrow" marker-end="url(#arrow)" />
+
+  <!-- 3.2 Activity: Submit Captain Application -->
+  <g transform="translate(1072, 739)">
+    <rect x="-150" y="-27" width="300" height="54" rx="5" class="act-box" />
+    <text x="0" y="-8" class="font-sans act-title">Submit Captaincy Application</text>
+    <text x="0" y="7" class="font-sans act-desc">Submit leadership statement &amp; cricket experience</text>
+    <text x="0" y="19" class="font-sans act-entity">Entity: captain_applications (status: PENDING)</text>
+  </g>
+
+  <!-- Arrow: Lane 3 (Submit App) -> Lane 2 (Review App) -->
+  <path d="M 1072 766 L 1072 787 L 652 787 L 652 805" class="flow-arrow" marker-end="url(#arrow)" />
+
+
+  <!-- STEP 4: College Admin Application Review & Decision -->
+  <!-- 4.1 Activity: Review Application -->
+  <g transform="translate(652, 832)">
+    <rect x="-150" y="-27" width="300" height="54" rx="5" class="act-box" />
+    <text x="0" y="-8" class="font-sans act-title">Review Captain Application</text>
+    <text x="0" y="7" class="font-sans act-desc">Evaluate credentials, statements &amp; college alignment</text>
+    <text x="0" y="19" class="font-sans act-entity">Endpoint: GET /api/v1/captain-applications/college/{id}</text>
+  </g>
+
+  <!-- Arrow: Review -> Decision Diamond -->
+  <line x1="652" y1="859" x2="652" y2="888" class="flow-arrow" marker-end="url(#arrow)" />
+
+  <!-- 4.2 Decision Diamond: Approve or Reject? -->
+  <g transform="translate(652, 925)">
+    <polygon points="0,-35 110,0 0,35 -110,0" class="decision-diamond" />
+    <text x="0" y="-3" class="font-sans decision-text">Decision:</text>
+    <text x="0" y="12" class="font-sans decision-text">Approve or Reject?</text>
+  </g>
+
+  <!-- Branch REJECTED: Left from Diamond -> Termination Box -->
+  <path d="M 542 925 L 340 925 L 340 980" class="flow-arrow-rejected" marker-end="url(#arrow-red)" />
+  <rect x="420" y="911" width="70" height="18" rx="3" fill="#fee2e2" stroke="#fca5a5" stroke-width="0.8" />
+  <text x="455" y="924" class="font-sans branch-label branch-rejected">REJECTED</text>
+
+  <!-- Rejection Terminal Box -->
+  <g transform="translate(340, 1005)">
+    <rect x="-135" y="-25" width="270" height="50" rx="8" class="terminal-end-term" />
+    <text x="0" y="-4" class="font-sans terminal-text">Application Rejected</text>
+    <text x="0" y="12" class="font-sans terminal-sub">Process Terminated for Applicant</text>
+  </g>
+
+  <!-- Branch APPROVED: Down from Diamond -> Grant Role -->
+  <line x1="652" y1="960" x2="652" y2="990" class="flow-arrow-approved" marker-end="url(#arrow-green)" />
+  <rect x="662" y="966" width="75" height="18" rx="3" fill="#dcfce7" stroke="#86efac" stroke-width="0.8" />
+  <text x="699" y="979" class="font-sans branch-label branch-approved">APPROVED</text>
+
+  <!-- 4.3 Activity: Grant Captain Access -->
+  <g transform="translate(652, 1017)">
+    <rect x="-150" y="-27" width="300" height="54" rx="5" class="act-box-highlight" />
+    <text x="0" y="-8" class="font-sans act-title" fill="#15803d">Grant Team Captain Access</text>
+    <text x="0" y="7" class="font-sans act-desc">Assign scoped TEAM_CAPTAIN role &amp; update status</text>
+    <text x="0" y="19" class="font-sans act-entity">Role Assignment: TEAM_CAPTAIN (college_id, team_id)</text>
+  </g>
+
+  <!-- Arrow: Lane 2 (Grant Captain) -> Lane 4 (Create/Manage Team) -->
+  <path d="M 802 1017 L 1492 1017 L 1492 188" class="flow-arrow" marker-end="url(#arrow)" />
+
+
+  <!-- STEP 5: Team Captain Team & Squad Management (Lane 4 Top) -->
+  <!-- 5.1 Activity: Create & Manage Team -->
+  <g transform="translate(1492, 215)">
+    <rect x="-150" y="-27" width="300" height="54" rx="5" class="act-box" />
+    <text x="0" y="-8" class="font-sans act-title">Create and Manage Team</text>
+    <text x="0" y="7" class="font-sans act-desc">Set team name, short code, city &amp; home ground</text>
+    <text x="0" y="19" class="font-sans act-entity">Entity: teams (unique code, college_id)</text>
+  </g>
+
+  <!-- Arrow: Manage Team -> Register Team -->
+  <line x1="1492" y1="242" x2="1492" y2="270" class="flow-arrow" marker-end="url(#arrow)" />
+
+  <!-- 5.2 Activity: Register Team for Tournament -->
+  <g transform="translate(1492, 297)">
+    <rect x="-150" y="-27" width="300" height="54" rx="5" class="act-box" />
+    <text x="0" y="-8" class="font-sans act-title">Register Team for Tournament</text>
+    <text x="0" y="7" class="font-sans act-desc">Enroll team into the published competition bracket</text>
+    <text x="0" y="19" class="font-sans act-entity">Entity: tournament_registrations (uk_tournament_team)</text>
+  </g>
+
+  <!-- Arrow: Register Team -> Manage Squad -->
+  <line x1="1492" y1="324" x2="1492" y2="352" class="flow-arrow" marker-end="url(#arrow)" />
+
+  <!-- 5.3 Activity: Manage Squad (Max 15) -->
+  <g transform="translate(1492, 379)">
+    <rect x="-150" y="-27" width="300" height="54" rx="5" class="act-box" />
+    <text x="0" y="-8" class="font-sans act-title">Manage Tournament Squad (Max 15)</text>
+    <text x="0" y="7" class="font-sans act-desc">Add players, tag keeper/captain &amp; lock 15-player roster</text>
+    <text x="0" y="19" class="font-sans act-entity">Entity: tournament_squads (uk_ts_tournament_player)</text>
+  </g>
+
+  <!-- Arrow: Lane 4 (Manage Squad) -> Lane 2 (Review & Schedule Matches) -->
+  <path d="M 1342 379 L 1220 379 L 1220 1100 L 652 1100 L 652 1118" class="flow-arrow" marker-end="url(#arrow)" />
+
+
+  <!-- STEP 6: College Admin Review Registrations & Schedule Matches -->
+  <g transform="translate(652, 1145)">
+    <rect x="-150" y="-27" width="300" height="54" rx="5" class="act-box" />
+    <text x="0" y="-8" class="font-sans act-title">Review Registrations &amp; Schedule Matches</text>
+    <text x="0" y="7" class="font-sans act-desc">Verify registered squads &amp; schedule fixtures (Team A vs Team B)</text>
+    <text x="0" y="19" class="font-sans act-entity">Entity: matches (venue, match_date, status: UPCOMING)</text>
+  </g>
+
+  <!-- Arrow: Lane 2 (Schedule Matches) -> Lane 4 (Select Playing XI) -->
+  <path d="M 802 1145 L 1492 1145 L 1492 1098" class="flow-arrow" marker-end="url(#arrow)" />
+
+
+  <!-- STEP 7: Team Captain Select Playing XI (Exactly 11) -->
+  <g transform="translate(1492, 1070)">
+    <rect x="-150" y="-27" width="300" height="54" rx="5" class="act-box" />
+    <text x="0" y="-8" class="font-sans act-title">Select Match Playing XI (Exactly 11)</text>
+    <text x="0" y="7" class="font-sans act-desc">Nominate exactly 11 players from 15-player squad roster</text>
+    <text x="0" y="19" class="font-sans act-entity">Entity: match_playing_xi (uk_match_player)</text>
+  </g>
+
+  <!-- Arrow: Lane 4 (Select Playing XI) -> Final Tournament Ready Terminal -->
+  <path d="M 1492 1097 L 1492 1205 L 1072 1205 L 1072 1222" class="flow-arrow" marker-end="url(#arrow)" />
+
+
+  <!-- STEP 8: Tournament Ready Terminal -->
+  <g transform="translate(1072, 1250)">
+    <rect x="-180" y="-28" width="360" height="56" rx="28" class="terminal-end-success" />
+    <text x="0" y="-5" class="font-sans terminal-text">TOURNAMENT &amp; MATCH READY</text>
+    <text x="0" y="13" class="font-sans terminal-sub">Setup Completed • Fixtures &amp; Playing XIs Locked for Match Day</text>
+  </g>
+
+  <!-- ======================================================== -->
+  <!-- CAPTION                                                  -->
+  <!-- ======================================================== -->
+  <g transform="translate(875, 1295)">
+    <text x="0" y="0" class="font-sans caption-main">Figure 4.5: Tournament Management Workflow Diagram</text>
+    <text x="0" y="18" class="font-sans caption-sub">Sequential role-based flowchart across Platform Admin, College Admin, Registered Student, and Team Captain swimlanes.</text>
+  </g>
+</svg>

@@ -9,6 +9,10 @@ public interface TeamService {
 
     TeamResponse createTeam(TeamRequest request);
 
+    TeamResponse createTeam(TeamRequest request, Long captainUserId);
+
+    TeamResponse transferCaptaincy(Long teamId, Long newCaptainUserId, Long adminUserId);
+
     List<TeamResponse> getAllTeams();
 
     List<TeamResponse> getActiveTeams();

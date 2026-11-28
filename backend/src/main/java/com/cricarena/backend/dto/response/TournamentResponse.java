@@ -15,6 +15,11 @@ public class TournamentResponse {
     private LocalDate startDate;
     private LocalDate endDate;
     private TournamentStatus status;
+    private Long collegeId;
+    private String collegeName;
+    private LocalDateTime registrationOpensAt;
+    private LocalDateTime registrationDeadline;
+    private boolean isRegistrationOpen;
     private LocalDateTime scheduledPublishAt;
     private LocalDateTime publishedAt;
     private LocalDateTime createdAt;
@@ -118,6 +123,46 @@ public class TournamentResponse {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Long getCollegeId() {
+        return collegeId;
+    }
+
+    public void setCollegeId(Long collegeId) {
+        this.collegeId = collegeId;
+    }
+
+    public String getCollegeName() {
+        return collegeName;
+    }
+
+    public void setCollegeName(String collegeName) {
+        this.collegeName = collegeName;
+    }
+
+    public LocalDateTime getRegistrationOpensAt() {
+        return registrationOpensAt;
+    }
+
+    public void setRegistrationOpensAt(LocalDateTime registrationOpensAt) {
+        this.registrationOpensAt = registrationOpensAt;
+    }
+
+    public LocalDateTime getRegistrationDeadline() {
+        return registrationDeadline;
+    }
+
+    public void setRegistrationDeadline(LocalDateTime registrationDeadline) {
+        this.registrationDeadline = registrationDeadline;
+    }
+
+    public boolean isRegistrationOpen() {
+        return isRegistrationOpen;
+    }
+
+    public void setRegistrationOpen(boolean registrationOpen) {
+        isRegistrationOpen = registrationOpen;
     }
 
     public LocalDateTime getUpdatedAt() {

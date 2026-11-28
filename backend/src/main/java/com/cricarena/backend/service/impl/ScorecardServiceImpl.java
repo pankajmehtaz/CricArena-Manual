@@ -54,6 +54,15 @@ public class ScorecardServiceImpl implements ScorecardService {
         List<MatchInnings> inningsList = matchInningsRepository
                 .findAllByMatch_IdOrderByInningsNumberAsc(matchId);
 
+        List<MatchPlayingXI> allMatchPlayingXI = matchPlayingXIRepository.findAllByMatch_Id(matchId);
+        Map<Long, String> playerNameSnapshotMap = allMatchPlayingXI.stream()
+                .filter(xi -> xi.getPlayer() != null && xi.getPlayerName() != null)
+                .collect(Collectors.toMap(
+                        xi -> xi.getPlayer().getId(),
+                        MatchPlayingXI::getPlayerName,
+                        (existing, replacement) -> existing
+                ));
+
         // Build innings scorecards
         InningsScorecardResponse sc1 = null;
         InningsScorecardResponse sc2 = null;
@@ -65,7 +74,7 @@ public class ScorecardServiceImpl implements ScorecardService {
             List<MatchPlayingXI> playingXI = matchPlayingXIRepository
                     .findAllByMatch_IdAndTeam_Id(matchId, innings.getBattingTeam().getId());
 
-            InningsScorecardResponse sc = buildInningsScorecard(innings, deliveries, playingXI);
+            InningsScorecardResponse sc = buildInningsScorecard(innings, deliveries, playingXI, playerNameSnapshotMap);
 
             if (innings.getInningsNumber() == 1) {
                 sc1 = sc;
@@ -115,7 +124,8 @@ public class ScorecardServiceImpl implements ScorecardService {
     private InningsScorecardResponse buildInningsScorecard(
             MatchInnings innings,
             List<MatchDelivery> deliveries,
-            List<MatchPlayingXI> playingXI) {
+            List<MatchPlayingXI> playingXI,
+            Map<Long, String> nameMap) {
 
         InningsScorecardResponse sc = new InningsScorecardResponse();
         sc.setId(innings.getId());
@@ -141,16 +151,16 @@ public class ScorecardServiceImpl implements ScorecardService {
         sc.setRunRate(runRate);
 
         // Batting scorecard
-        sc.setBatters(buildBattingScorecard(deliveries, playingXI));
+        sc.setBatters(buildBattingScorecard(deliveries, playingXI, nameMap));
 
         // Bowling scorecard
-        sc.setBowlers(buildBowlingScorecard(deliveries));
+        sc.setBowlers(buildBowlingScorecard(deliveries, nameMap));
 
         // Extras
         sc.setExtras(buildExtras(deliveries));
 
         // Fall of wickets
-        sc.setFallOfWickets(buildFallOfWickets(deliveries));
+        sc.setFallOfWickets(buildFallOfWickets(deliveries, nameMap));
 
         // Recent deliveries (last 12)
         List<DeliveryResponse> recentDeliveries = new ArrayList<>();
@@ -169,7 +179,8 @@ public class ScorecardServiceImpl implements ScorecardService {
 
     private List<BatterScorecardEntry> buildBattingScorecard(
             List<MatchDelivery> deliveries,
-            List<MatchPlayingXI> playingXI) {
+            List<MatchPlayingXI> playingXI,
+            Map<Long, String> nameMap) {
 
         // Track each batter's stats. Keep insertion order (order of first appearance).
         LinkedHashMap<Long, BatterStats> statsMap = new LinkedHashMap<>();
@@ -206,7 +217,7 @@ public class ScorecardServiceImpl implements ScorecardService {
             }
             stats.dismissed = true;
             stats.dismissalType = d.getDismissalType();
-            stats.dismissalText = buildDismissalText(d);
+            stats.dismissalText = buildDismissalText(d, nameMap);
         }
 
         // Build ordered list from playing XI (insert DNBs at the end)
@@ -215,7 +226,7 @@ public class ScorecardServiceImpl implements ScorecardService {
 
         // Add appeared batters in order of appearance
         for (Map.Entry<Long, BatterStats> entry : statsMap.entrySet()) {
-            result.add(toEntry(entry.getValue()));
+            result.add(toEntry(entry.getValue(), nameMap));
         }
 
         // Add did-not-bat from playing XI
@@ -239,10 +250,10 @@ public class ScorecardServiceImpl implements ScorecardService {
         return result;
     }
 
-    private BatterScorecardEntry toEntry(BatterStats stats) {
+    private BatterScorecardEntry toEntry(BatterStats stats, Map<Long, String> nameMap) {
         BatterScorecardEntry e = new BatterScorecardEntry();
         e.setPlayerId(stats.player.getId());
-        e.setPlayerName(stats.player.getFullName());
+        e.setPlayerName(resolvePlayerName(stats.player, nameMap));
         e.setRuns(stats.runs);
         e.setBallsFaced(stats.ballsFaced);
         e.setFours(stats.fours);
@@ -260,10 +271,10 @@ public class ScorecardServiceImpl implements ScorecardService {
         return e;
     }
 
-    private String buildDismissalText(MatchDelivery d) {
+    private String buildDismissalText(MatchDelivery d, Map<Long, String> nameMap) {
         if (d.getDismissalType() == null) return "";
-        String bowlerName = d.getBowler() != null ? d.getBowler().getFullName() : "unknown";
-        String fielderName = d.getFielder() != null ? d.getFielder().getFullName() : null;
+        String bowlerName = d.getBowler() != null ? resolvePlayerName(d.getBowler(), nameMap) : "unknown";
+        String fielderName = d.getFielder() != null ? resolvePlayerName(d.getFielder(), nameMap) : null;
 
         return switch (d.getDismissalType()) {
             case BOWLED -> "b " + bowlerName;
@@ -284,7 +295,7 @@ public class ScorecardServiceImpl implements ScorecardService {
     // Bowling scorecard
     // -------------------------------------------------------------------------
 
-    private List<BowlerScorecardEntry> buildBowlingScorecard(List<MatchDelivery> deliveries) {
+    private List<BowlerScorecardEntry> buildBowlingScorecard(List<MatchDelivery> deliveries, Map<Long, String> nameMap) {
         // Group deliveries by bowler, maintaining first-appearance order
         LinkedHashMap<Long, BowlerStats> statsMap = new LinkedHashMap<>();
 
@@ -331,7 +342,7 @@ public class ScorecardServiceImpl implements ScorecardService {
         for (BowlerStats stats : statsMap.values()) {
             BowlerScorecardEntry e = new BowlerScorecardEntry();
             e.setPlayerId(stats.player.getId());
-            e.setPlayerName(stats.player.getFullName());
+            e.setPlayerName(resolvePlayerName(stats.player, nameMap));
             e.setOvers(formatOvers(stats.legalBalls));
             e.setMaidens(stats.maidens);
             e.setRunsConceded(stats.runsConceded);
@@ -345,6 +356,14 @@ public class ScorecardServiceImpl implements ScorecardService {
             result.add(e);
         }
         return result;
+    }
+
+    private String resolvePlayerName(Player player, Map<Long, String> nameMap) {
+        if (player == null) return "unknown";
+        if (nameMap != null && nameMap.containsKey(player.getId())) {
+            return nameMap.get(player.getId());
+        }
+        return player.getFullName();
     }
 
     // -------------------------------------------------------------------------
@@ -369,7 +388,7 @@ public class ScorecardServiceImpl implements ScorecardService {
     // Fall of wickets
     // -------------------------------------------------------------------------
 
-    private List<FallOfWicketResponse> buildFallOfWickets(List<MatchDelivery> deliveries) {
+    private List<FallOfWicketResponse> buildFallOfWickets(List<MatchDelivery> deliveries, Map<Long, String> nameMap) {
         List<FallOfWicketResponse> fow = new ArrayList<>();
         int runningTotal = 0;
         int wicketNum = 0;
@@ -386,7 +405,7 @@ public class ScorecardServiceImpl implements ScorecardService {
                 f.setScore(runningTotal);
                 f.setOvers(formatOvers(legalBalls));
                 f.setDismissedPlayerId(d.getDismissedPlayer().getId());
-                f.setDismissedPlayerName(d.getDismissedPlayer().getFullName());
+                f.setDismissedPlayerName(resolvePlayerName(d.getDismissedPlayer(), nameMap));
                 fow.add(f);
             }
         }

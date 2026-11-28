@@ -221,4 +221,31 @@ class JwtAuthenticationFilterTest {
         assertNull(SecurityContextHolder.getContext().getAuthentication());
         verify(filterChain).doFilter(request, response);
     }
+
+    @Test
+    @DisplayName("Should authenticate role-less user with ROLE_USER authority")
+    void doFilterInternal_withRolelessUserToken_setsRoleUserAuthentication() throws ServletException, IOException {
+        String token = "roleless.jwt.token";
+        Long userId = 10L;
+        String email = "student@cricarena.com";
+
+        User user = new User("Student", email, "hash", true);
+        user.setId(userId);
+
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + token);
+        when(jwtTokenProvider.validateToken(token)).thenReturn(true);
+        when(jwtTokenProvider.getUserIdFromToken(token)).thenReturn(userId);
+        when(jwtTokenProvider.getEmailFromToken(token)).thenReturn(email);
+        when(jwtTokenProvider.getRoleFromToken(token)).thenReturn(null);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userRoleAssignmentRepository.findByUser_IdAndActiveTrue(userId)).thenReturn(Optional.empty());
+
+        filter.doFilter(request, response, filterChain);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        assertNotNull(auth);
+        assertEquals(email, auth.getPrincipal());
+        assertTrue(auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER")));
+        verify(filterChain).doFilter(request, response);
+    }
 }

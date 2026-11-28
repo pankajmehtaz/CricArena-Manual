@@ -330,8 +330,6 @@ class MatchServiceImplTest {
         );
 
         when(matchRepository.findById(1L)).thenReturn(Optional.of(match));
-        when(tournamentRegistrationRepository.existsByTournament_IdAndTeam_Id(10L, 100L)).thenReturn(true);
-        when(tournamentRegistrationRepository.existsByTournament_IdAndTeam_Id(10L, 200L)).thenReturn(true);
 
         assertThrows(IllegalStateException.class, () -> matchService.updateMatch(1L, updateRequest));
         verify(matchRepository, never()).save(any());
@@ -442,6 +440,38 @@ class MatchServiceImplTest {
         assertNotNull(response);
         assertEquals(MatchStatus.IN_PROGRESS, response.getStatus());
         assertEquals(100L, response.getTossWinnerTeamId());
+    }
+
+    @Test
+    @DisplayName("updateMatch - completed match is immutable and cannot be updated")
+    void updateMatch_completedMatch_throwsIllegalStateException() {
+        Match match = new Match(tournament, teamA, teamB, LocalDateTime.of(2026, 12, 5, 14, 0), "Venue", MatchFormat.T20);
+        match.setId(1L);
+        match.setStatus(MatchStatus.COMPLETED);
+
+        MatchRequest request = new MatchRequest(10L, 100L, 200L, LocalDateTime.of(2026, 12, 5, 14, 0), "Venue", MatchFormat.T20, MatchStatus.COMPLETED);
+
+        when(matchRepository.findById(1L)).thenReturn(Optional.of(match));
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+                () -> matchService.updateMatch(1L, request));
+        assertEquals("Completed or abandoned matches are locked and cannot be edited", ex.getMessage());
+    }
+
+    @Test
+    @DisplayName("updateMatch - abandoned match is immutable and cannot be updated")
+    void updateMatch_abandonedMatch_throwsIllegalStateException() {
+        Match match = new Match(tournament, teamA, teamB, LocalDateTime.of(2026, 12, 5, 14, 0), "Venue", MatchFormat.T20);
+        match.setId(1L);
+        match.setStatus(MatchStatus.ABANDONED);
+
+        MatchRequest request = new MatchRequest(10L, 100L, 200L, LocalDateTime.of(2026, 12, 5, 14, 0), "Venue", MatchFormat.T20, MatchStatus.ABANDONED);
+
+        when(matchRepository.findById(1L)).thenReturn(Optional.of(match));
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+                () -> matchService.updateMatch(1L, request));
+        assertEquals("Completed or abandoned matches are locked and cannot be edited", ex.getMessage());
     }
 
     @Test

@@ -1,11 +1,15 @@
 package com.cricarena.backend.controller;
 
+import com.cricarena.backend.dto.request.CaptainTransferRequest;
 import com.cricarena.backend.dto.request.TeamRequest;
 import com.cricarena.backend.dto.response.TeamResponse;
+import com.cricarena.backend.security.TenantSecurityService;
 import com.cricarena.backend.service.TeamService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,13 +26,16 @@ import java.util.List;
 public class TeamController {
 
     private final TeamService teamService;
+    private final TenantSecurityService tenantSecurityService;
 
-    public TeamController(TeamService teamService) {
+    public TeamController(TeamService teamService, TenantSecurityService tenantSecurityService) {
         this.teamService = teamService;
+        this.tenantSecurityService = tenantSecurityService;
     }
 
     @PostMapping
-    public ResponseEntity<TeamResponse> createTeam(@Valid @RequestBody TeamRequest request) {
+    @PreAuthorize("@tenantSecurityService.canCreateTeamForCollege(#request.collegeId)")
+    public ResponseEntity<TeamResponse> createTeam(@Valid @RequestBody @P("request") TeamRequest request) {
         TeamResponse response = teamService.createTeam(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -64,16 +71,30 @@ public class TeamController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("@tenantSecurityService.canManageTeam(#id)")
     public ResponseEntity<TeamResponse> updateTeam(
-            @PathVariable Long id,
+            @PathVariable @P("id") Long id,
             @Valid @RequestBody TeamRequest request) {
         TeamResponse response = teamService.updateTeam(id, request);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deactivateTeam(@PathVariable Long id) {
+    @PreAuthorize("@tenantSecurityService.canManageTeam(#id)")
+    public ResponseEntity<Void> deactivateTeam(@PathVariable @P("id") Long id) {
         teamService.deactivateTeam(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/captain")
+    @PreAuthorize("@tenantSecurityService.canTransferCaptaincy(#id)")
+    public ResponseEntity<TeamResponse> transferCaptaincy(
+            @PathVariable @P("id") Long id,
+            @Valid @RequestBody @P("request") CaptainTransferRequest request) {
+        Long adminUserId = tenantSecurityService.getCurrentUser()
+                .map(com.cricarena.backend.entity.User::getId)
+                .orElse(null);
+        TeamResponse response = teamService.transferCaptaincy(id, request.getNewCaptainUserId(), adminUserId);
+        return ResponseEntity.ok(response);
     }
 }
